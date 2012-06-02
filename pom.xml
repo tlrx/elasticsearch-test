@@ -47,7 +47,8 @@
 				<artifactId>downloads-maven-plugin</artifactId>
 				<version>0.5</version>
 				<configuration>
-					<description>${project.name} build of the ${project.version} release</description>
+					<description>${project.name} build of the ${project.version}
+						release</description>
 					<override>true</override>
 					<includeAttached>true</includeAttached>
 					<dryRun>false</dryRun>
@@ -60,6 +61,16 @@
 						<phase>deploy</phase>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.2.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.2</version>
 			</plugin>
 		</plugins>
 	</build>
