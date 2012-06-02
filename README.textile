@@ -1,0 +1,50 @@
+Here you will find simple Java annotations that simplifies unit testing with "Elasticsearch":http://www.elasticsearch.org/
+
+
+h2. Versions
+
+|_. elasticsearch-test	|_. ElasticSearch|
+|   master (0.0.1)      |     0.19.4     |
+
+
+h2. How To
+
+h3. Maven dependency
+
+Add a new dependency in your Maven POM file:
+
+bc. <dependency>
+  <groupId>fr.tlrx.elasticsearch</groupId>
+  <artifactId>elasticsearch-test</artifactId>
+  <version>0.0.1</version>
+</dependency>
+
+
+h3. JUnit Runner
+
+Define the JUnit @Runner@ to use in your test classes with the annotation @@RunWith(ElasticsearchRunner.class)@ :
+
+<pre>
+package fr.tlrx.elasticsearch.samples.core;
+
+@RunWith(ElasticsearchRunner.class)
+public class VersionTest {
+	...
+}
+</pre>
+
+
+h3. Annotations
+
+The library provides the following annotations:
+
+|_. Annotation			|_. 		 				|
+|   @ElasticsearchNode      	|     Instantiate an elasticsearch Node     	|
+|   @ElasticsearchClient      	|     Instantiate an elasticsearch Client     	|
+|   @ElasticsearchAdminClient  	|     Instantiate an elasticsearch AdminClient 	|
+|   @ElasticsearchIndex      	|     Creates an index			     	|
+|   @ElasticsearchMapping      	|     Defines a mapping for an index and a document type     	|
+|   @ElasticsearchMappingField  |     Defines field properties in a mapping     	|
+|   @ElasticsearchSetting  	|     Defines settings (at node or index level) 	|
+
+
