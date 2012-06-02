@@ -99,7 +99,7 @@ Example with a predefined node:
 
 h3. @ElasticsearchAdminClient
 
-Same as @ElasticsearchClient but instantiates an @AdminClient@.
+Same as @ElasticsearchClient@ but instantiates an @AdminClient@.
 
 <pre>
 	@ElasticsearchAdminClient
@@ -124,9 +124,7 @@ This example will create an index with default name "test":
 		
 	@Test
 	@ElasticsearchIndex
-	public void test(){
-		...
-	}
+	public void test(){...}
 </pre>
 
 This example will create an index "people":
