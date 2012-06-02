@@ -29,14 +29,14 @@
 
 
 	<scm>
-		<url>scm:git:git@github.com:tlrx/transport-zeromq.git</url>
-		<connection>scm:git:git@github.com:tlrx/transport-zeromq.git</connection>
-		<developerConnection>scm:git:git@github.com:tlrx/transport-zeromq.git</developerConnection>
+		<url>scm:git:git@github.com:tlrx/elasticsearch-test.git</url>
+		<connection>scm:git:git@github.com:tlrx/elasticsearch-test.git</connection>
+		<developerConnection>scm:git:git@github.com:tlrx/elasticsearch-test.git</developerConnection>
 	</scm>
 
 	<issueManagement>
 		<system>GitHub</system>
-		<url>https://github.com/tlrx/transport-zeromq/issues/</url>
+		<url>https://github.com/tlrx/elasticsearch-test/issues/</url>
 	</issueManagement>
 
 
