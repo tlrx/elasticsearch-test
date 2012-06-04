@@ -54,6 +54,7 @@ h3. @ElasticsearchNode
 Used to instantiate an elasticsearch @Node@ in a unit test class.
 
 Simple node has default name "elasticsearch-test-node" and is part of default cluster name "elasticsearch-test-cluster". Node is local and can hold data.
+
 bc. package fr.tlrx.elasticsearch.samples.core;
 	@RunWith(ElasticsearchRunner.class)
 	public class VersionTest {
