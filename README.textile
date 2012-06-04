@@ -110,14 +110,15 @@ h3. @ElasticsearchIndex, @ElasticsearchIndexes
 Used to creates one or many index before a test method. A node must be instantiated before using this annotation.
 
 This example will create an index with default name "test":
+
 bc. @ElasticsearchAdminClient
 AdminClient adminClient;
 @Test
 @ElasticsearchIndex
 public void test(){...}
 
-
 This example will create an index "people":
+
 bc. @Test
 @ElasticsearchIndex(indexName = "people")
 public void test(){
