@@ -17,6 +17,9 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.node.Node;
 
+import fr.tlrx.elasticsearch.test.annotations.ElasticsearchAnalysis;
+import fr.tlrx.elasticsearch.test.annotations.ElasticsearchAnalyzer;
+import fr.tlrx.elasticsearch.test.annotations.ElasticsearchFilter;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndexes;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchMapping;
@@ -65,13 +68,32 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractElasticsearchAn
 						.put("number_of_shards", "1")
 						.put("number_of_replicas", "0");
 
-				// Manager settings for this index
+				// Manage settings for this index
 				ElasticsearchSetting[] indexSettings = elasticsearchIndex.settings();
 				if (indexSettings != null && indexSettings.length > 0) {
 					for (ElasticsearchSetting setting : indexSettings) {
 						settings.put(setting.name(), setting.value());
 					}
 				}
+				
+				// Manage analysis filters & tokenizers
+				ElasticsearchAnalysis analysis = elasticsearchIndex.analysis();
+				if (analysis != null) {
+					for(ElasticsearchFilter filter : analysis.filters()){
+						String prefix = "settings.index.analysis.filter." + filter.name(); 
+						settings.put(prefix + ".type", filter.typeName());
+						for (ElasticsearchSetting setting : filter.settings()) {
+							settings.put(prefix + "." + setting.name(), setting.value());
+						}
+					}
+					for(ElasticsearchAnalyzer analyzer : analysis.analyzers()){
+						String prefix = "settings.index.analysis.analyzer." + analyzer.name(); 
+						settings.put(prefix + ".tokenizer", analyzer.tokenizer());
+						if(analyzer.filtersNames() != null && analyzer.filtersNames().length > 0){
+							settings.putArray(prefix +  ".filter", analyzer.filtersNames());
+						}
+					}
+				}			
 				
 				CreateIndexRequestBuilder builder = admin.indices()
 						.prepareCreate(elasticsearchIndex.indexName())

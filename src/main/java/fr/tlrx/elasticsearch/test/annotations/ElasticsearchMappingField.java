@@ -16,7 +16,7 @@ import java.lang.annotation.RetentionPolicy;
 public @interface ElasticsearchMappingField {
 
 	public enum Types {
-		String
+		String, MultiField
 	}
 	
 	public enum Store {
@@ -37,5 +37,4 @@ public @interface ElasticsearchMappingField {
 	 * Store property (true means "yes", false means "no" and default is set to false)
 	 */
 	Store store() default Store.No;
-	
 }

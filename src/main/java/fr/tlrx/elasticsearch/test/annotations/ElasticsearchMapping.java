@@ -20,5 +20,8 @@ public @interface ElasticsearchMapping {
 	 */
 	String typeName();
 	
+	/**
+	 * Fields of the mapping
+	 */
 	ElasticsearchMappingField[] properties();
 }

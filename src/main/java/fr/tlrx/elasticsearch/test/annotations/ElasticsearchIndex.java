@@ -42,4 +42,9 @@ public @interface ElasticsearchIndex {
 	 * Index settings
 	 */
 	ElasticsearchSetting[] settings() default {};	
+	
+	/**
+	 * Analysis definitions
+	 */
+	ElasticsearchAnalysis analysis() default @ElasticsearchAnalysis();
 }
