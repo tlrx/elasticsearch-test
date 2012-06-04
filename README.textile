@@ -67,35 +67,31 @@ bc. package fr.tlrx.elasticsearch.samples.core;
 	}
 
 Example with custom cluster and node names, and local set to true and data set to false:
-<pre>@ElasticsearchNode(name = "node3", clusterName = "fourth-cluster-name", local = true, data = false)<br/>
+
+bc. @ElasticsearchNode(name = "node3", clusterName = "fourth-cluster-name", local = true, data = false)
 Node node3;
-</pre>
 
 Example with custom settings:
-<pre>@ElasticsearchNode(name = "node0", settings = {
+
+bc. @ElasticsearchNode(name = "node0", settings = {
 	@ElasticsearchSetting(name = "http.enabled", value = "false"),
 	@ElasticsearchSetting(name = "node.zone", value = "zone_one") })
 Node node;
-</pre>
 
 h3. @ElasticsearchClient
 
 Used to instantiate an elasticsearch @Client@ from a @Node@. The @nodeName@ parameter of the annotation is used to retrieve the node from which the client will be instantiated. If no nodeName is defined, a default node will be instantiated.
 
 Example with default node:
-<pre>
-	@ElasticsearchClient
-	Client client;
-</pre>
+bc. @ElasticsearchClient
+    Client client;
 
 Example with a predefined node:
-<pre>
-	@ElasticsearchNode(name = "node1")
+
+bc.	@ElasticsearchNode(name = "node1")
 	Node node1;
-	
 	@ElasticsearchClient(nodeName = "node1")
 	Client client1;
-</pre>
 
 h3. @ElasticsearchAdminClient
 
