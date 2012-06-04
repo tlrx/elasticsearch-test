@@ -54,22 +54,23 @@ h3. @ElasticsearchNode
 Used to instantiate an elasticsearch @Node@ in a unit test class.
 
 Simple node has default name "elasticsearch-test-node" and is part of default cluster name "elasticsearch-test-cluster". Node is local and can hold data.
-bc. package fr.tlrx.elasticsearch.samples.core;
-puts ""
-puts "@RunWith(ElasticsearchRunner.class)"
-puts "public class VersionTest {"
-puts "	@ElasticsearchNode"
-puts "	Node node;"
-puts ""	
-puts "	@Test"
-puts "	public void test(){"
-puts "		// Use of node"
-puts "	}"
-puts "}"
+<pre>package fr.tlrx.elasticsearch.samples.core;<br/>
+<br/>
+@RunWith(ElasticsearchRunner.class)<br/>
+public class VersionTest {<br/>
+<br/>
+	@ElasticsearchNode<br/>
+	Node node;<br/>
+<br/>	
+	@Test<br/>
+	public void test(){<br/>
+		// Use of node<br/>
+	}<br/>
+}
 </pre>
 
 Example with custom cluster and node names, and local set to true and data set to false:
-<pre>@ElasticsearchNode(name = "node3", clusterName = "fourth-cluster-name", local = true, data = false)
+<pre>@ElasticsearchNode(name = "node3", clusterName = "fourth-cluster-name", local = true, data = false)<br/>
 Node node3;
 </pre>
 
