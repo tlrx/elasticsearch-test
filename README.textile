@@ -83,54 +83,46 @@ h3. @ElasticsearchClient
 Used to instantiate an elasticsearch @Client@ from a @Node@. The @nodeName@ parameter of the annotation is used to retrieve the node from which the client will be instantiated. If no nodeName is defined, a default node will be instantiated.
 
 Example with default node:
+
 bc. @ElasticsearchClient
-    Client client;
+Client client;
 
 Example with a predefined node:
 
-bc.	@ElasticsearchNode(name = "node1")
-	Node node1;
-	@ElasticsearchClient(nodeName = "node1")
-	Client client1;
+bc. @ElasticsearchNode(name = "node1")
+Node node1;
+@ElasticsearchClient(nodeName = "node1")
+Client client1;
 
 h3. @ElasticsearchAdminClient
 
 Same as @ElasticsearchClient@ but instantiates an @AdminClient@.
 
-<pre>
-	@ElasticsearchAdminClient
-	AdminClient adminClient0;
-	
-	@ElasticsearchNode(name = "node1")
-	Node node1;
-	
-	@ElasticsearchAdminClient(nodeName = "node1")
-	AdminClient adminClient1;
-</pre>
-
+bc. @ElasticsearchAdminClient
+AdminClient adminClient0;
+@ElasticsearchNode(name = "node1")
+Node node1;
+@ElasticsearchAdminClient(nodeName = "node1")
+AdminClient adminClient1;
 
 h3. @ElasticsearchIndex, @ElasticsearchIndexes
 
 Used to creates one or many index before a test method. A node must be instantiated before using this annotation.
 
 This example will create an index with default name "test":
-<pre>
-	@ElasticsearchAdminClient
-	AdminClient adminClient;
-		
-	@Test
-	@ElasticsearchIndex
-	public void test(){...}
-</pre>
+bc. @ElasticsearchAdminClient
+AdminClient adminClient;
+@Test
+@ElasticsearchIndex
+public void test(){...}
+
 
 This example will create an index "people":
-<pre>
-	@Test
-	@ElasticsearchIndex(indexName = "people")
-	public void test(){
-		...
-	}
-</pre>
+bc. @Test
+@ElasticsearchIndex(indexName = "people")
+public void test(){
+...
+}
 
 
 This example will create 2 indexs:
