@@ -133,10 +133,30 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractElasticsearchAn
 			
 			if ((properties != null) && (properties.length > 0)) {
 				for (ElasticsearchMappingField field : properties) {
-					builder.startObject(field.name())
+				    builder = builder.startObject(field.name())
 								.field("type", field.type().toString().toLowerCase())
-								.field("store", field.store().toString().toLowerCase())
-							.endObject();
+								.field("store", field.store().toString().toLowerCase());
+
+                    if (!field.index().equals(ElasticsearchMappingField.Index.Undefined)) {
+                        builder.field("index", field.index().toString().toLowerCase());
+                    }
+
+                    if ((field.analyzerName() != null) 
+                            && (!ElasticsearchMappingField.DEFAULT_ANALYZER.equals(field.analyzerName()))) {
+                        builder.field("analyzer", field.analyzerName().toString().toLowerCase());
+                    }
+                    
+                    if ((field.indexAnalyzerName() != null) 
+                            && (!ElasticsearchMappingField.DEFAULT_ANALYZER.equals(field.indexAnalyzerName()))) {
+                        builder.field("index_analyzer", field.indexAnalyzerName().toString().toLowerCase());
+                    }
+                    
+                    if ((field.searchAnalyzerName() != null) 
+                            && (!ElasticsearchMappingField.DEFAULT_ANALYZER.equals(field.searchAnalyzerName()))) {
+                        builder.field("search_analyzer", field.searchAnalyzerName().toString().toLowerCase());
+                    }                    
+					
+                    builder = builder.endObject();
 				}
 			}
 

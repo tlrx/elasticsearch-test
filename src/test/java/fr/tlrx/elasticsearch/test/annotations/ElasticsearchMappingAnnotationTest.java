@@ -1,6 +1,8 @@
 package fr.tlrx.elasticsearch.test.annotations;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -15,10 +17,7 @@ import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchAdminClient;
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchMapping;
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchMappingField;
+import fr.tlrx.elasticsearch.test.annotations.ElasticsearchMappingField.Index;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchMappingField.Store;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchMappingField.Types;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
@@ -35,14 +34,23 @@ public class ElasticsearchMappingAnnotationTest {
 	@ElasticsearchAdminClient
 	AdminClient adminClient;
 	
-	@Test
-	@ElasticsearchIndex(indexName = "library", 
+    @Test
+	@ElasticsearchIndex(indexName = "library",
 			mappings = { 
 				@ElasticsearchMapping(typeName = "book", 
 						properties = { 
 							@ElasticsearchMappingField(name = "title", store = Store.Yes, type = Types.String),
-							@ElasticsearchMappingField(name = "author", store = Store.Yes, type = Types.String)
-						}) 
+							@ElasticsearchMappingField(name = "author", store = Store.No, type = Types.String, index = Index.Not_Analyzed),
+							@ElasticsearchMappingField(name = "description", store = Store.Yes, type = Types.String, index = Index.Analyzed, analyzerName = "standard"),
+							@ElasticsearchMappingField(name = "role", store = Store.No, type = Types.String, index = Index.Analyzed, indexAnalyzerName = "keyword", searchAnalyzerName = "standard")
+						},
+						propertiesMulti = {
+				            @ElasticsearchMappingMultiField(name = "name",
+				                                            fields = {
+                            				                    @ElasticsearchMappingField(name = "name", type = Types.String, index = Index.Analyzed),
+                            				                    @ElasticsearchMappingField(name = "untouched", type = Types.String, index = Index.Not_Analyzed)
+				            })
+				        }) 
 			})
 	public void testElasticsearchMapping(){
 		
@@ -62,11 +70,44 @@ public class ElasticsearchMappingAnnotationTest {
 		IndexMetaData indexMetaData = stateResponse.getState().getMetaData().index("library");
 		MappingMetaData mappingMetaData = indexMetaData.getMappings().get("book");
 		assertNotNull("Mapping must exists", mappingMetaData);
-		
+		        
 		try {
-			Map<String, Object> def = mappingMetaData.sourceAsMap();
-			Object properties = def.get("properties");
-			assertNotNull("properties must exists", properties);
+		    // Check properties
+            Map<String, Object> def = mappingMetaData.sourceAsMap();
+        	@SuppressWarnings("unchecked")
+            Map<String, Object> properties = (Map<String, Object>) def.get("properties");
+            assertNotNull("properties must exists", properties);
+
+            // Check title
+        	@SuppressWarnings("unchecked")
+            Map<String, Object> title = (Map<String, Object>) properties.get("title");
+            assertEquals("string", title.get("type"));
+            assertEquals("yes", title.get("store"));
+
+            // Check author
+        	@SuppressWarnings("unchecked")
+            Map<String, Object> author = (Map<String, Object>) properties.get("author");
+            assertEquals("not_analyzed", author.get("index"));
+            assertEquals("string", author.get("type"));
+            assertNull("Store = No must be null", author.get("store"));
+            
+            // Check description
+        	@SuppressWarnings("unchecked")
+            Map<String, Object> description = (Map<String, Object>) properties.get("description");
+            assertNull("index = analyzed must be null", description.get("index"));
+            assertEquals("string", description.get("type"));
+            assertEquals("yes", description.get("store"));
+            assertEquals("standard", description.get("analyzer"));            
+            
+            // Check role
+        	@SuppressWarnings("unchecked")
+            Map<String, Object> role = (Map<String, Object>) properties.get("role");
+            assertNull("index = analyzed must be null", role.get("index"));
+            assertEquals("string", role.get("type"));
+            assertNull("Store = No must be null", role.get("store"));
+            assertEquals("keyword", role.get("index_analyzer"));
+            assertEquals("standard", role.get("search_analyzer"));
+            
 		} catch (IOException e) {
 			fail("Exception when reading mapping metadata");
 		}

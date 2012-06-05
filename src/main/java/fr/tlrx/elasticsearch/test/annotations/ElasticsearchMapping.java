@@ -24,4 +24,9 @@ public @interface ElasticsearchMapping {
 	 * Fields of the mapping
 	 */
 	ElasticsearchMappingField[] properties();
+	
+	/**
+     * Multi Fields of the mapping
+     */
+    ElasticsearchMappingMultiField[] propertiesMulti() default {};
 }
