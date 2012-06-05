@@ -24,6 +24,7 @@ import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndexes;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchMapping;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchMappingField;
+import fr.tlrx.elasticsearch.test.annotations.ElasticsearchMappingMultiField;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchSetting;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 
@@ -129,6 +130,7 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractElasticsearchAn
 					.startObject(mapping.typeName())
 					.startObject("properties");
 
+			// Manage fields
 			ElasticsearchMappingField[] properties = mapping.properties();
 			
 			if ((properties != null) && (properties.length > 0)) {
@@ -157,6 +159,45 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractElasticsearchAn
                     }                    
 					
                     builder = builder.endObject();
+				}
+			}
+			
+			// Manage multi_fields
+			ElasticsearchMappingMultiField[] propertiesMulti = mapping.propertiesMulti();
+			
+			if ((propertiesMulti != null) && (propertiesMulti.length > 0)) {
+				for (ElasticsearchMappingMultiField multiField : propertiesMulti) {
+				    builder = builder.startObject(multiField.name())
+				    					.startObject("fields");
+
+				    // TODO tlrx mutualize this
+				    for (ElasticsearchMappingField field : multiField.fields()) {
+				    	builder = builder.startObject(field.name())
+								.field("type", field.type().toString().toLowerCase())
+								.field("store", field.store().toString().toLowerCase());
+	
+	                    if (!field.index().equals(ElasticsearchMappingField.Index.Undefined)) {
+	                        builder.field("index", field.index().toString().toLowerCase());
+	                    }
+	
+	                    if ((field.analyzerName() != null) 
+	                            && (!ElasticsearchMappingField.DEFAULT_ANALYZER.equals(field.analyzerName()))) {
+	                        builder.field("analyzer", field.analyzerName().toString().toLowerCase());
+	                    }
+	                    
+	                    if ((field.indexAnalyzerName() != null) 
+	                            && (!ElasticsearchMappingField.DEFAULT_ANALYZER.equals(field.indexAnalyzerName()))) {
+	                        builder.field("index_analyzer", field.indexAnalyzerName().toString().toLowerCase());
+	                    }
+	                    
+	                    if ((field.searchAnalyzerName() != null) 
+	                            && (!ElasticsearchMappingField.DEFAULT_ANALYZER.equals(field.searchAnalyzerName()))) {
+	                        builder.field("search_analyzer", field.searchAnalyzerName().toString().toLowerCase());
+	                    }                    
+					
+	                    builder = builder.endObject();
+				    }
+				    builder = builder.endObject();
 				}
 			}
 

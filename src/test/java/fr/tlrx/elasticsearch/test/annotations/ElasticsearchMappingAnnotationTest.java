@@ -108,6 +108,22 @@ public class ElasticsearchMappingAnnotationTest {
             assertEquals("keyword", role.get("index_analyzer"));
             assertEquals("standard", role.get("search_analyzer"));
             
+            // Check name
+        	@SuppressWarnings("unchecked")
+            Map<String, Object> name = (Map<String, Object>) properties.get("name");
+        	assertEquals("multi_field", name.get("type"));
+        	@SuppressWarnings("unchecked")
+			Map<String, Object> fields = (Map<String, Object>) name.get("fields");
+        	assertNotNull("fields must exists", fields);
+        	@SuppressWarnings("unchecked")
+			Map<String, Object> untouched = (Map<String, Object>) fields.get("untouched");
+            assertEquals("string", untouched.get("type"));
+            assertNull("Store = No must be null", untouched.get("store"));
+            assertEquals("not_analyzed", untouched.get("index"));
+            @SuppressWarnings("unchecked")
+			Map<String, Object> nameName = (Map<String, Object>) fields.get("name");
+            assertEquals("string", nameName.get("type"));
+            
 		} catch (IOException e) {
 			fail("Exception when reading mapping metadata");
 		}
