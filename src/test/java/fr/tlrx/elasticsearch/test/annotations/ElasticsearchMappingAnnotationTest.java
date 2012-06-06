@@ -38,6 +38,8 @@ public class ElasticsearchMappingAnnotationTest {
 	@ElasticsearchIndex(indexName = "library",
 			mappings = { 
 				@ElasticsearchMapping(typeName = "book", 
+						source = false,
+						compress = false,
 						properties = { 
 							@ElasticsearchMappingField(name = "title", store = Store.Yes, type = Types.String),
 							@ElasticsearchMappingField(name = "author", store = Store.No, type = Types.String, index = Index.Not_Analyzed),
@@ -72,12 +74,20 @@ public class ElasticsearchMappingAnnotationTest {
 		assertNotNull("Mapping must exists", mappingMetaData);
 		        
 		try {
-		    // Check properties
             Map<String, Object> def = mappingMetaData.sourceAsMap();
+
+		    // Check _source
+        	@SuppressWarnings("unchecked")
+            Map<String, Object> source = (Map<String, Object>) def.get("_source");
+            assertNotNull("_source must exists", source);
+            assertEquals(Boolean.FALSE, source.get("compress"));
+            assertEquals(Boolean.FALSE, source.get("enabled"));
+            
+		    // Check properties
         	@SuppressWarnings("unchecked")
             Map<String, Object> properties = (Map<String, Object>) def.get("properties");
             assertNotNull("properties must exists", properties);
-
+            
             // Check title
         	@SuppressWarnings("unchecked")
             Map<String, Object> title = (Map<String, Object>) properties.get("title");

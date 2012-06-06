@@ -14,7 +14,8 @@ import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.ImmutableSettings.Builder;
 import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.json.JsonXContent;
+import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.node.Node;
 
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchAnalysis;
@@ -125,9 +126,13 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractElasticsearchAn
 		XContentBuilder builder = null;
 
 		try {
-			builder = JsonXContent.contentBuilder()
+			builder = XContentFactory.contentBuilder(XContentType.JSON)
 					.startObject()
 					.startObject(mapping.typeName())
+					.startObject("_source")
+						.field("enabled", String.valueOf(mapping.source()))
+						.field("compress", String.valueOf(mapping.compress()))
+					.endObject()
 					.startObject("properties");
 
 			// Manage fields
@@ -210,11 +215,16 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractElasticsearchAn
 			}
 
 			builder.endObject().endObject().endObject();
+			
+			// Prints generated mapping
+			System.out.printf("Mapping [%s]:\r\n%s\r\n", mapping.typeName(), builder.string());
+			
 		} catch (Exception e) {
 			System.err.println("Exception when building mapping for type "
 					+ mapping.typeName());
 			e.printStackTrace(System.err);
 		}
+		
 		return builder;
 	}
 }

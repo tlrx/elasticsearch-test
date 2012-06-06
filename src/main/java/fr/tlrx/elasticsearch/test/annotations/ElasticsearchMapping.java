@@ -23,10 +23,20 @@ public @interface ElasticsearchMapping {
 	/**
 	 * Fields of the mapping
 	 */
-	ElasticsearchMappingField[] properties();
+	ElasticsearchMappingField[] properties() default {};
 	
 	/**
      * Multi Fields of the mapping
      */
     ElasticsearchMappingMultiField[] propertiesMulti() default {};
+    
+    /**
+     * The source's "enabled" value (default to true)
+     */
+    boolean source() default true;
+    
+    /**
+     * The source's "compress" value (default to false)
+     */
+    boolean compress() default false;
 }

@@ -106,6 +106,6 @@ public class AliasesTest {
 		
 		// Search for all books in alias "library"
 		SearchResponse searchResponse = client.prepareSearch("library").execute().actionGet();
-		assertEquals(2, searchResponse.hits().totalHits());		
+		assertEquals(2, searchResponse.hits().totalHits());
 	}
 }
