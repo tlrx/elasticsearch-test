@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchMappingField.Index;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchMappingField.Store;
+import fr.tlrx.elasticsearch.test.annotations.ElasticsearchMappingField.TermVector;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchMappingField.Types;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 
@@ -35,6 +36,7 @@ public class ElasticsearchMappingAnnotationTest {
 	AdminClient adminClient;
 	
     @Test
+    @SuppressWarnings("unchecked")
 	@ElasticsearchIndex(indexName = "library",
 			mappings = { 
 				@ElasticsearchMapping(typeName = "book", 
@@ -49,8 +51,8 @@ public class ElasticsearchMappingAnnotationTest {
 						propertiesMulti = {
 				            @ElasticsearchMappingMultiField(name = "name",
 				                                            fields = {
-                            				                    @ElasticsearchMappingField(name = "name", type = Types.String, index = Index.Analyzed),
-                            				                    @ElasticsearchMappingField(name = "untouched", type = Types.String, index = Index.Not_Analyzed)
+                            				                    @ElasticsearchMappingField(name = "name", type = Types.String, index = Index.Analyzed, termVector = TermVector.With_Offsets),
+                            				                    @ElasticsearchMappingField(name = "untouched", type = Types.String, index = Index.Not_Analyzed, termVector = TermVector.With_Positions_Offsets)
 				            })
 				        }) 
 			})
@@ -77,41 +79,35 @@ public class ElasticsearchMappingAnnotationTest {
             Map<String, Object> def = mappingMetaData.sourceAsMap();
 
 		    // Check _source
-        	@SuppressWarnings("unchecked")
-            Map<String, Object> source = (Map<String, Object>) def.get("_source");
+        	Map<String, Object> source = (Map<String, Object>) def.get("_source");
             assertNotNull("_source must exists", source);
             assertEquals(Boolean.FALSE, source.get("compress"));
             assertEquals(Boolean.FALSE, source.get("enabled"));
             
 		    // Check properties
-        	@SuppressWarnings("unchecked")
-            Map<String, Object> properties = (Map<String, Object>) def.get("properties");
+        	Map<String, Object> properties = (Map<String, Object>) def.get("properties");
             assertNotNull("properties must exists", properties);
             
             // Check title
-        	@SuppressWarnings("unchecked")
-            Map<String, Object> title = (Map<String, Object>) properties.get("title");
+        	Map<String, Object> title = (Map<String, Object>) properties.get("title");
             assertEquals("string", title.get("type"));
             assertEquals("yes", title.get("store"));
 
             // Check author
-        	@SuppressWarnings("unchecked")
-            Map<String, Object> author = (Map<String, Object>) properties.get("author");
+        	Map<String, Object> author = (Map<String, Object>) properties.get("author");
             assertEquals("not_analyzed", author.get("index"));
             assertEquals("string", author.get("type"));
             assertNull("Store = No must be null", author.get("store"));
             
             // Check description
-        	@SuppressWarnings("unchecked")
-            Map<String, Object> description = (Map<String, Object>) properties.get("description");
+        	Map<String, Object> description = (Map<String, Object>) properties.get("description");
             assertNull("index = analyzed must be null", description.get("index"));
             assertEquals("string", description.get("type"));
             assertEquals("yes", description.get("store"));
             assertEquals("standard", description.get("analyzer"));            
             
             // Check role
-        	@SuppressWarnings("unchecked")
-            Map<String, Object> role = (Map<String, Object>) properties.get("role");
+        	Map<String, Object> role = (Map<String, Object>) properties.get("role");
             assertNull("index = analyzed must be null", role.get("index"));
             assertEquals("string", role.get("type"));
             assertNull("Store = No must be null", role.get("store"));
@@ -119,20 +115,22 @@ public class ElasticsearchMappingAnnotationTest {
             assertEquals("standard", role.get("search_analyzer"));
             
             // Check name
-        	@SuppressWarnings("unchecked")
-            Map<String, Object> name = (Map<String, Object>) properties.get("name");
+        	Map<String, Object> name = (Map<String, Object>) properties.get("name");
         	assertEquals("multi_field", name.get("type"));
-        	@SuppressWarnings("unchecked")
-			Map<String, Object> fields = (Map<String, Object>) name.get("fields");
+        	Map<String, Object> fields = (Map<String, Object>) name.get("fields");
         	assertNotNull("fields must exists", fields);
-        	@SuppressWarnings("unchecked")
-			Map<String, Object> untouched = (Map<String, Object>) fields.get("untouched");
+        	
+        	// Check name.untouched
+        	Map<String, Object> untouched = (Map<String, Object>) fields.get("untouched");
             assertEquals("string", untouched.get("type"));
             assertNull("Store = No must be null", untouched.get("store"));
             assertEquals("not_analyzed", untouched.get("index"));
-            @SuppressWarnings("unchecked")
+            assertEquals("with_positions_offsets", untouched.get("term_vector"));
+            
+            // Check name.name
 			Map<String, Object> nameName = (Map<String, Object>) fields.get("name");
             assertEquals("string", nameName.get("type"));
+            assertEquals("with_offsets", nameName.get("term_vector"));
             
 		} catch (IOException e) {
 			fail("Exception when reading mapping metadata");

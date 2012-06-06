@@ -33,10 +33,10 @@ public class ElasticsearchAnalysisAnnotationTest {
 					@ElasticsearchSetting(name = "number_of_replicas", value = "8") },
 					analysis = @ElasticsearchAnalysis(
 							filters = {
-									@ElasticsearchFilter(name = "myPhonetic", typeName = "phonetic", 
+									@ElasticsearchFilter(name = "myLength", typeName = "length", 
 											settings = {
-												@ElasticsearchSetting(name = "encoder", value = "double_metaphone"),
-												@ElasticsearchSetting(name = "replace", value = "false"),
+												@ElasticsearchSetting(name = "min", value = "0"),
+												@ElasticsearchSetting(name = "max", value = "5"),
 											}),
 									@ElasticsearchFilter(name = "myEdgeNGram", typeName = "edgeNGram",
 											settings = {
@@ -47,7 +47,7 @@ public class ElasticsearchAnalysisAnnotationTest {
 							},
 							analyzers = {
 									@ElasticsearchAnalyzer(name = "untouched", tokenizer = "keyword", filtersNames = {"lowercase", "asciifolding"}),
-									@ElasticsearchAnalyzer(name = "basic", tokenizer = "standard", filtersNames = {"lowercase", "asciifolding", "myPhonetic"})
+									@ElasticsearchAnalyzer(name = "basic", tokenizer = "standard", filtersNames = {"lowercase", "myEdgeNGram", "myLength"})
 							})
 					),
 			@ElasticsearchIndex(indexName = "people") })
@@ -62,24 +62,24 @@ public class ElasticsearchAnalysisAnnotationTest {
 		assertEquals("8", indexSettings.get("index.number_of_replicas"));
 
 		// Check filters
-		assertEquals("phonetic", indexSettings.get("index.settings.index.analysis.filter.myPhonetic.type"));
-		assertEquals("double_metaphone", indexSettings.get("index.settings.index.analysis.filter.myPhonetic.encoder"));
-		assertEquals("false", indexSettings.get("index.settings.index.analysis.filter.myPhonetic.replace"));
+		assertEquals("length", indexSettings.get("index.analysis.filter.myLength.type"));
+		assertEquals("0", indexSettings.get("index.analysis.filter.myLength.min"));
+		assertEquals("5", indexSettings.get("index.analysis.filter.myLength.max"));
 		
-		assertEquals("edgeNGram", indexSettings.get("index.settings.index.analysis.filter.myEdgeNGram.type"));
-		assertEquals("2", indexSettings.get("index.settings.index.analysis.filter.myEdgeNGram.min_gram"));
-		assertEquals("10", indexSettings.get("index.settings.index.analysis.filter.myEdgeNGram.max_gram"));
-		assertEquals("front", indexSettings.get("index.settings.index.analysis.filter.myEdgeNGram.side"));
+		assertEquals("edgeNGram", indexSettings.get("index.analysis.filter.myEdgeNGram.type"));
+		assertEquals("2", indexSettings.get("index.analysis.filter.myEdgeNGram.min_gram"));
+		assertEquals("10", indexSettings.get("index.analysis.filter.myEdgeNGram.max_gram"));
+		assertEquals("front", indexSettings.get("index.analysis.filter.myEdgeNGram.side"));
 		
 		// Check analyzers
-		assertEquals("keyword", indexSettings.get("index.settings.index.analysis.analyzer.untouched.tokenizer"));
-		assertEquals("lowercase", indexSettings.get("index.settings.index.analysis.analyzer.untouched.filter.0"));
-		assertEquals("asciifolding", indexSettings.get("index.settings.index.analysis.analyzer.untouched.filter.1"));
+		assertEquals("keyword", indexSettings.get("index.analysis.analyzer.untouched.tokenizer"));
+		assertEquals("lowercase", indexSettings.get("index.analysis.analyzer.untouched.filter.0"));
+		assertEquals("asciifolding", indexSettings.get("index.analysis.analyzer.untouched.filter.1"));
 		
-		assertEquals("standard", indexSettings.get("index.settings.index.analysis.analyzer.basic.tokenizer"));
-		assertEquals("lowercase", indexSettings.get("index.settings.index.analysis.analyzer.basic.filter.0"));
-		assertEquals("asciifolding", indexSettings.get("index.settings.index.analysis.analyzer.basic.filter.1"));
-		assertEquals("myPhonetic", indexSettings.get("index.settings.index.analysis.analyzer.basic.filter.2"));
+		assertEquals("standard", indexSettings.get("index.analysis.analyzer.basic.tokenizer"));
+		assertEquals("lowercase", indexSettings.get("index.analysis.analyzer.basic.filter.0"));
+		assertEquals("myEdgeNGram", indexSettings.get("index.analysis.analyzer.basic.filter.1"));
+		assertEquals("myLength", indexSettings.get("index.analysis.analyzer.basic.filter.2"));
 	}
 
 }

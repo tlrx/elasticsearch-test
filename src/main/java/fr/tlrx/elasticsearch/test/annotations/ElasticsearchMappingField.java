@@ -32,6 +32,10 @@ public @interface ElasticsearchMappingField {
         Undefined, Analyzed, Not_Analyzed, No
     }
 	
+	public enum TermVector {
+		Yes, No, With_Offsets, With_Positions, With_Positions_Offsets
+	}
+	
 	/**
 	 * The field's name for which properties are defined
 	 */
@@ -66,4 +70,9 @@ public @interface ElasticsearchMappingField {
      * The analyzer used to analyze the field when part of a query string.
      */
     String searchAnalyzerName() default DEFAULT_ANALYZER;
+    
+    /**
+     * The term_vector value for analyzed field
+     */
+    TermVector termVector() default TermVector.No;
 }
