@@ -39,7 +39,7 @@ public @interface ElasticsearchIndex {
 	ElasticsearchMapping[] mappings() default {};
 	
 	/**
-	 * Index settings
+	 * Index settings, defined with {@link ElasticsearchSetting} annotation
 	 */
 	ElasticsearchSetting[] settings() default {};	
 	
@@ -47,4 +47,9 @@ public @interface ElasticsearchIndex {
 	 * Analysis definitions
 	 */
 	ElasticsearchAnalysis analysis() default @ElasticsearchAnalysis();
+	
+	/**
+	 * Index configuration (settings, mappings etc), loaded from a file's path
+	 */
+	String loadFromFile() default "";
 }

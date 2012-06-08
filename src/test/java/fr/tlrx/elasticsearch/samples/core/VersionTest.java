@@ -88,6 +88,19 @@ public class VersionTest {
 				.execute().actionGet();
 		
 		assertEquals("Updated version must be 3", 3, response.version());
+		
+		// Try to update book #1 with a wrong version number
+		try {
+			response = client.prepareIndex("library", "book", "1")
+					.setSource(builder)
+					.setVersion(5)
+					.execute().actionGet();
+
+			fail("Expected a VersionConflictEngineException");
+		} catch (VersionConflictEngineException e) {
+			assertNotNull(e);
+			assertEquals("Current version must be 3", 3, e.getCurrentVersion());
+		}
 	}
 	
 
@@ -101,9 +114,9 @@ public class VersionTest {
 					.field("title", "Notre Dame de Paris")
 					.field("author", "Victor Hugo")
 				.endObject();
-		
+
 		long startVersion = System.currentTimeMillis();
-		
+
 		// Try to index book #2 with a custom version but no external
 		try {
 			IndexResponse response = client.prepareIndex("library", "book", "2")
@@ -125,15 +138,14 @@ public class VersionTest {
 				.setVersionType(VersionType.EXTERNAL)
 				.execute()
 				.actionGet();
-		
+
 		assertEquals("Document version must be incremented", startVersion, response.version());
 		
 		// Modify book #2
 		builder = JsonXContent.contentBuilder().startObject()
 						.field("title", "Notre-Dame de Paris")
 						.field("author", "Victor Hugo")
-					.endObject();
-		
+					.endObject();		
 		
 		// Update book #2 without version control
 		response = client.prepareIndex("library", "book", "2")
@@ -143,11 +155,12 @@ public class VersionTest {
 		
 		assertEquals("Document updated must have an incremented version number", startVersion + 1, response.version());
 		
-		// Try to index book #2 with version control and wrong version number
+		// Try to index book #2 with lower version number
 		try {
 			response = client.prepareIndex("library", "book", "2")
 					.setSource(builder)
 					.setVersion(startVersion - 10)
+					.setVersionType(VersionType.EXTERNAL)
 					.execute()
 					.actionGet();
 
@@ -157,27 +170,66 @@ public class VersionTest {
 			assertEquals(startVersion + 1, e.getCurrentVersion());
 		}
 				
-		// Update book #2 with version control
-		response = client.prepareIndex("library", "book", "2")
-				.setSource(builder)
-				.setVersion(startVersion + 1)
-				.execute()
-				.actionGet();
-		
-		assertEquals("Document updated must have an incremented version number", startVersion + 2, response.version());
-				
-		// Try to index book #2 with version control and negative version number
+		// Try to index book #2 with same version number
 		try {
 			response = client.prepareIndex("library", "book", "2")
 					.setSource(builder)
-					.setVersion(-10)
+					.setVersion(startVersion + 1)
+					.setVersionType(VersionType.EXTERNAL)
 					.execute()
 					.actionGet();
 
 			fail("Expected a VersionConflictEngineException");
 		} catch (VersionConflictEngineException e) {
 			assertNotNull(e);
-			assertEquals(startVersion + 2, e.getCurrentVersion());
+			assertEquals(startVersion + 1, e.getCurrentVersion());
 		}
+		
+		// Try to index book #2 with greater version number
+		response = client.prepareIndex("library", "book", "2")
+				.setSource(builder)
+				.setVersion(startVersion + 10)
+				.setVersionType(VersionType.EXTERNAL)
+				.execute()
+				.actionGet();
+		assertEquals("Updated version must be " + startVersion + 10, startVersion + 10, response.version());
+				
+		// Try to index book #2 with lower version number and no version_type = external
+		try {
+			response = client.prepareIndex("library", "book", "2")
+					.setSource(builder)
+					.setVersion(startVersion + 5)
+					.setVersionType(VersionType.EXTERNAL)
+					.execute()
+					.actionGet();
+
+			fail("Expected a VersionConflictEngineException");
+		} catch (VersionConflictEngineException e) {
+			assertNotNull(e);
+			assertEquals(startVersion + 10, e.getCurrentVersion());
+		}
+		
+		// Update book #2 with same version number but no version_type = external
+		response = client.prepareIndex("library", "book", "2")
+				.setSource(builder)
+				.setVersion(startVersion + 10)
+				.execute()
+				.actionGet();
+		
+		assertEquals("Document updated must have an incremented version number", startVersion + 11, response.version());
+		
+		// Try to index book #2 with greater version number and no version_type = external
+		try {
+			response = client.prepareIndex("library", "book", "2")
+					.setSource(builder)
+					.setVersion(startVersion + 30)
+					.execute()
+					.actionGet();
+
+			fail("Expected a VersionConflictEngineException");
+		} catch (VersionConflictEngineException e) {
+			assertNotNull(e);
+			assertEquals(startVersion + 11, e.getCurrentVersion());
+		}				
 	}
 }

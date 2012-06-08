@@ -3,7 +3,9 @@
  */
 package fr.tlrx.elasticsearch.test.support.junit.handlers;
 
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,7 @@ import org.elasticsearch.action.admin.indices.exists.IndicesExistsResponse;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.ImmutableSettings.Builder;
+import org.elasticsearch.common.settings.SettingsException;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
@@ -46,7 +49,7 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractElasticsearchAn
 		
 		List<ElasticsearchIndex> indexes = new ArrayList<ElasticsearchIndex>();
 		
-		// Manage @ElasticsearchIndex
+		// Manage @ElasticsearchIndexes
 		if (annotation instanceof ElasticsearchIndexes) {
 			for(ElasticsearchIndex index : ((ElasticsearchIndexes)annotation).indexes()){
 				indexes.add(index);	
@@ -73,8 +76,17 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractElasticsearchAn
 						.execute().actionGet();
 			}
 
-			Builder settings = ImmutableSettings.settingsBuilder()						
-					.put("number_of_shards", "1")
+			// If index configuration must be loaded from a file
+			String fileSettings = elasticsearchIndex.loadFromFile();
+			if (fileSettings != null && fileSettings.length() > 0) {
+
+				tery
+				
+			}
+
+			Builder settings = ImmutableSettings.settingsBuilder();
+
+			settings.put("number_of_shards", "1")
 					.put("number_of_replicas", "0");
 
 			// Manage settings for this index
@@ -206,11 +218,9 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractElasticsearchAn
 				    	
 				    	for (ElasticsearchMappingField field :fields) {
 				    		builder = buildField(field, builder);
-					    }
-				    	
+					    }				    	
 				    	builder = builder.endObject();
-				    }
-				    
+				    }				    
 				    builder = builder.endObject();
 				}
 			}
@@ -227,5 +237,33 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractElasticsearchAn
 		}
 		
 		return builder;
+	}
+	
+	private void loadFile(String path, Object instance, String indexName, String documentType){
+		Builder settings = ImmutableSettings.settingsBuilder();
+		
+		if((path != null) && (path.length() > 0)){
+			try {
+				// At first, tries to load the conf file from classpath
+				settings.loadFromClasspath(path);
+			} catch (SettingsException se) {
+				// It failed, let's try to load the file
+				try {
+					Reader reader = new FileReader(path);
+					settings.loadFromStream(path, reader)
+				} catch (Exception e) {
+					// Well, we try everything.
+				}
+			}
+		}
+		/*
+		
+		1/ charge a partir du path si renseigné
+			- en classpath
+			- en direct
+		2/ charge à partir de la classe de test
+			- en classpath
+		3/ charge à partir de la racine
+		*/
 	}
 }
