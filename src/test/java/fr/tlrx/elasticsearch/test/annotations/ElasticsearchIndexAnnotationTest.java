@@ -4,11 +4,10 @@ import static org.junit.Assert.assertTrue;
 
 import org.elasticsearch.action.admin.indices.exists.IndicesExistsResponse;
 import org.elasticsearch.client.AdminClient;
+import org.elasticsearch.node.Node;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchAdminClient;
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 
 /**
@@ -19,6 +18,9 @@ import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
  */
 @RunWith(ElasticsearchRunner.class)
 public class ElasticsearchIndexAnnotationTest {
+	
+	@ElasticsearchNode
+	Node node;
 	
 	@ElasticsearchAdminClient
 	AdminClient adminClient;

@@ -10,7 +10,6 @@ import org.elasticsearch.node.Node;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 
 /**
@@ -20,6 +19,7 @@ import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
  * 
  */
 @RunWith(ElasticsearchRunner.class)
+@ElasticsearchNode
 public class ElasticsearchNodeAnnotationTest {
 
 	private static final String CLUSTER_NAME = "cluster.name";
@@ -47,7 +47,7 @@ public class ElasticsearchNodeAnnotationTest {
 	
 	@ElasticsearchNode(name = "node3-1", clusterName = "fourth-cluster-name")
 	Node node3_1;
-
+	
 	@Test
 	public void testElasticsearchNodes(){
 		assertNotNull(node0);

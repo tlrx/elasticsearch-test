@@ -1,14 +1,11 @@
 /**
  * 
  */
-package fr.tlrx.elasticsearch.test.support.junit.handlers;
+package fr.tlrx.elasticsearch.test.support.junit.handlers.annotations;
 
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
@@ -16,7 +13,6 @@ import org.elasticsearch.action.admin.indices.exists.IndicesExistsResponse;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.ImmutableSettings.Builder;
-import org.elasticsearch.common.settings.SettingsException;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
@@ -26,12 +22,11 @@ import fr.tlrx.elasticsearch.test.annotations.ElasticsearchAnalysis;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchAnalyzer;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchFilter;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndexes;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchMapping;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchMappingField;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchMappingMultiField;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchSetting;
-import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
+import fr.tlrx.elasticsearch.test.support.junit.handlers.MethodLevelElasticsearchAnnotationHandler;
 
 /**
  * Handle {@link ElasticsearchIndex} annotation
@@ -39,100 +34,98 @@ import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
  * @author tlrx
  * 
  */
-public class ElasticsearchIndexAnnotationHandler extends AbstractElasticsearchAnnotationHandler {
+public class ElasticsearchIndexAnnotationHandler implements MethodLevelElasticsearchAnnotationHandler {
 
 	public boolean support(Annotation annotation) {
-		return (annotation instanceof ElasticsearchIndex) || (annotation instanceof ElasticsearchIndexes);
+		return (annotation instanceof ElasticsearchIndex);
 	}
-	
-	public void handleBefore(ElasticsearchRunner runner, Object instance, Annotation annotation) {
-		
-		List<ElasticsearchIndex> indexes = new ArrayList<ElasticsearchIndex>();
-		
-		// Manage @ElasticsearchIndexes
-		if (annotation instanceof ElasticsearchIndexes) {
-			for(ElasticsearchIndex index : ((ElasticsearchIndexes)annotation).indexes()){
-				indexes.add(index);	
+
+	public void handleBefore(Annotation annotation, Object instance, Map<String, Object> context) throws Exception {
+		buildIndex((ElasticsearchIndex)annotation, context);
+	}
+
+	public void handleAfter(Annotation annotation, Object instance, Map<String, Object> context) throws Exception {
+		// TODO tlrx clean after execution?
+	}
+
+	/**
+	 * Creates or Updates an index
+	 * 
+	 * @param elasticsearchIndex
+	 * @throws Exception 
+	 */
+	protected void buildIndex(ElasticsearchIndex elasticsearchIndex, Map<String, Object> context) throws Exception {
+		// Get a node
+		Node node = (Node) context.get(elasticsearchIndex.nodeName());
+		if (node == null) {
+			if (context.size() == 1) {
+				node = (Node) context.values().iterator().next();
+			} else {
+				throw new Exception("Unable to create index: nodeName must be defined.");
 			}
-		// Manage @ElasticsearchIndex
-		} else if (annotation instanceof ElasticsearchIndex) {
-			indexes.add((ElasticsearchIndex) annotation);
-		}		
-		
-		for (ElasticsearchIndex elasticsearchIndex : indexes) {
-			// Get a node
-			Node node = runner.node(elasticsearchIndex.nodeName());
-			AdminClient admin = node.client().admin();
-
-			// Check if index already exists
-			IndicesExistsResponse existResponse = admin.indices()
-					.prepareExists(elasticsearchIndex.indexName())
-					.execute().actionGet();
-
-			if (existResponse.exists()) {
-				// Drop the index
-				DeleteIndexResponse deleteResponse = admin.indices()
-						.prepareDelete(elasticsearchIndex.indexName())
-						.execute().actionGet();
-			}
-
-			// If index configuration must be loaded from a file
-			String fileSettings = elasticsearchIndex.loadFromFile();
-			if (fileSettings != null && fileSettings.length() > 0) {
-
-				tery
-				
-			}
-
-			Builder settings = ImmutableSettings.settingsBuilder();
-
-			settings.put("number_of_shards", "1")
-					.put("number_of_replicas", "0");
-
-			// Manage settings for this index
-			ElasticsearchSetting[] indexSettings = elasticsearchIndex.settings();
-			if (indexSettings != null && indexSettings.length > 0) {
-				for (ElasticsearchSetting setting : indexSettings) {
-					settings.put(setting.name(), setting.value());
-				}
-			}
-			
-			// Manage analysis filters & tokenizers
-			ElasticsearchAnalysis analysis = elasticsearchIndex.analysis();
-			if (analysis != null) {
-				for(ElasticsearchFilter filter : analysis.filters()){
-					String prefix = "analysis.filter." + filter.name(); 
-					settings.put(prefix + ".type", filter.typeName());
-					for (ElasticsearchSetting setting : filter.settings()) {
-						settings.put(prefix + "." + setting.name(), setting.value());
-					}
-				}
-				for(ElasticsearchAnalyzer analyzer : analysis.analyzers()){
-					String prefix = "analysis.analyzer." + analyzer.name(); 
-					settings.put(prefix + ".tokenizer", analyzer.tokenizer());
-					if(analyzer.filtersNames() != null && analyzer.filtersNames().length > 0){
-						settings.putArray(prefix +  ".filter", analyzer.filtersNames());
-					}
-				}
-			}			
-			
-			CreateIndexRequestBuilder builder = admin.indices()
-					.prepareCreate(elasticsearchIndex.indexName())
-					.setSettings(settings.build());
-
-			ElasticsearchMapping[] mappings = elasticsearchIndex.mappings();
-			
-			// Mappings are defined for this index
-			if (mappings != null && mappings.length > 0) {
-				for (ElasticsearchMapping mapping : mappings) {
-					builder.addMapping(mapping.typeName(), buildMapping(mapping));
-				}
-			}
-
-			// Create the index
-			builder.execute().actionGet();
-		
 		}
+		AdminClient admin = node.client().admin();
+
+		// Check if index already exists
+		IndicesExistsResponse existResponse = admin.indices()
+				.prepareExists(elasticsearchIndex.indexName()).execute()
+				.actionGet();
+
+		if (existResponse.exists()) {
+			// Drop the index
+			DeleteIndexResponse deleteResponse = admin.indices()
+					.prepareDelete(elasticsearchIndex.indexName()).execute()
+					.actionGet();
+		}
+
+		Builder settings = ImmutableSettings.settingsBuilder();
+
+		settings.put("number_of_shards", "1").put("number_of_replicas", "0");
+
+		// Manage settings for this index
+		ElasticsearchSetting[] indexSettings = elasticsearchIndex.settings();
+		if (indexSettings != null && indexSettings.length > 0) {
+			for (ElasticsearchSetting setting : indexSettings) {
+				settings.put(setting.name(), setting.value());
+			}
+		}
+
+		// Manage analysis filters & tokenizers
+		ElasticsearchAnalysis analysis = elasticsearchIndex.analysis();
+		if (analysis != null) {
+			for (ElasticsearchFilter filter : analysis.filters()) {
+				String prefix = "analysis.filter." + filter.name();
+				settings.put(prefix + ".type", filter.typeName());
+				for (ElasticsearchSetting setting : filter.settings()) {
+					settings.put(prefix + "." + setting.name(), setting.value());
+				}
+			}
+			for (ElasticsearchAnalyzer analyzer : analysis.analyzers()) {
+				String prefix = "analysis.analyzer." + analyzer.name();
+				settings.put(prefix + ".tokenizer", analyzer.tokenizer());
+				if (analyzer.filtersNames() != null
+						&& analyzer.filtersNames().length > 0) {
+					settings.putArray(prefix + ".filter",
+							analyzer.filtersNames());
+				}
+			}
+		}
+
+		CreateIndexRequestBuilder builder = admin.indices()
+				.prepareCreate(elasticsearchIndex.indexName())
+				.setSettings(settings.build());
+
+		ElasticsearchMapping[] mappings = elasticsearchIndex.mappings();
+
+		// Mappings are defined for this index
+		if (mappings != null && mappings.length > 0) {
+			for (ElasticsearchMapping mapping : mappings) {
+				builder.addMapping(mapping.typeName(), buildMapping(mapping));
+			}
+		}
+
+		// Create the index
+		builder.execute().actionGet();
 	}
 
 	/**
@@ -237,33 +230,5 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractElasticsearchAn
 		}
 		
 		return builder;
-	}
-	
-	private void loadFile(String path, Object instance, String indexName, String documentType){
-		Builder settings = ImmutableSettings.settingsBuilder();
-		
-		if((path != null) && (path.length() > 0)){
-			try {
-				// At first, tries to load the conf file from classpath
-				settings.loadFromClasspath(path);
-			} catch (SettingsException se) {
-				// It failed, let's try to load the file
-				try {
-					Reader reader = new FileReader(path);
-					settings.loadFromStream(path, reader)
-				} catch (Exception e) {
-					// Well, we try everything.
-				}
-			}
-		}
-		/*
-		
-		1/ charge a partir du path si renseigné
-			- en classpath
-			- en direct
-		2/ charge à partir de la classe de test
-			- en classpath
-		3/ charge à partir de la racine
-		*/
 	}
 }

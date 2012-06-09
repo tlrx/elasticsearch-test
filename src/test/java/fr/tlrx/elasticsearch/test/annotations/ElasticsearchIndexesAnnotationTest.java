@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.elasticsearch.action.admin.indices.exists.IndicesExistsResponse;
 import org.elasticsearch.client.AdminClient;
+import org.elasticsearch.node.Node;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -21,6 +22,9 @@ import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
  */
 @RunWith(ElasticsearchRunner.class)
 public class ElasticsearchIndexesAnnotationTest {
+	
+	@ElasticsearchNode(local = false)
+	Node node;
 	
 	@ElasticsearchAdminClient
 	AdminClient adminClient;

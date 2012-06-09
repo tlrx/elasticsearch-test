@@ -19,6 +19,7 @@ import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
  * 
  */
 @RunWith(ElasticsearchRunner.class)
+@ElasticsearchNode
 public class ElasticsearchAdminClientAnnotationTest {
 	
 	@ElasticsearchAdminClient

@@ -50,9 +50,9 @@ public class AliasesTest {
 
 	@Test
 	@ElasticsearchIndexes(indexes = {
-			@ElasticsearchIndex(indexName="library1"),
-			@ElasticsearchIndex(indexName="library2"),
-			@ElasticsearchIndex(indexName="library3")
+			@ElasticsearchIndex(indexName="library1", nodeName = "node0"),
+			@ElasticsearchIndex(indexName="library2", nodeName = "node0"),
+			@ElasticsearchIndex(indexName="library3", nodeName = "node0")
 	})
 	public void testAliases() throws IOException {
 		

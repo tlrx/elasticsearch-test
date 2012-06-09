@@ -9,20 +9,25 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * ElasticsearchNode Annotation
+ * ElasticsearchNode Annotation, used to instantiate Elasticsearch nodes.<br/>
+ * <br/>
+ * The annotation can be placed on Class or Class attributes. By default, the
+ * node is local, holds data, and has the name "elasticsearch-test-node" and the
+ * cluster's name "elasticsearch-test-cluster".
+ * <br/>
  * 
  * @author tlrx
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ ElementType.FIELD, ElementType.TYPE })
 public @interface ElasticsearchNode {
 
 	/**
 	 * Default node name
 	 */
 	public static final String DEFAULT_NODE_NAME = "elasticsearch-test-node";
-	
+
 	/**
 	 * The node's name, default to "elasticsearch-test-node"
 	 */
@@ -32,7 +37,7 @@ public @interface ElasticsearchNode {
 	 * Default cluster name
 	 */
 	public static final String DEFAULT_CLUSTER_NAME = "elasticsearch-test-cluster";
-	
+
 	/**
 	 * The cluster's name, default to "elasticsearch-test-cluster"
 	 */
@@ -41,15 +46,15 @@ public @interface ElasticsearchNode {
 	/**
 	 * The local property of the node, default to "true"
 	 */
-	boolean local() default true;	
+	boolean local() default true;
 
 	/**
 	 * The data property of the node, default to "true"
 	 */
-	boolean data() default true;	
+	boolean data() default true;
 
 	/**
 	 * Index settings
 	 */
-	ElasticsearchSetting[] settings() default {};	
+	ElasticsearchSetting[] settings() default {};
 }

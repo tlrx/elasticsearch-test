@@ -57,8 +57,7 @@ public class ElasticsearchSettingAnnotationTest {
 		ClusterStateResponse response = adminClient.cluster().prepareState()
 				.execute().actionGet();
 		
-		Settings indexSettings = response.state().metaData().index("library")
-				.settings();
+		Settings indexSettings = response.state().metaData().index("library").settings();
 		assertEquals("2", indexSettings.get("index.number_of_shards"));
 		assertEquals("1", indexSettings.get("index.number_of_replicas"));
 

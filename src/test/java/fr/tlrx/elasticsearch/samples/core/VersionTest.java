@@ -20,6 +20,7 @@ import org.junit.runner.RunWith;
 
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchClient;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
+import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 
 /**
@@ -29,6 +30,7 @@ import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
  * 
  */
 @RunWith(ElasticsearchRunner.class)
+@ElasticsearchNode
 public class VersionTest {
 
 	@ElasticsearchClient
