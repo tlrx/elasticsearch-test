@@ -54,7 +54,13 @@ public @interface ElasticsearchNode {
 	boolean data() default true;
 
 	/**
-	 * Index settings
+	 * Node settings, defined with annotations
 	 */
 	ElasticsearchSetting[] settings() default {};
+	
+	/**
+	 * Node settings defined in a configuration file. By default, the file
+	 * /config/elasticsearch.yml is loaded.
+	 */
+	String configFile() default "config/elasticsearch.yml";
 }

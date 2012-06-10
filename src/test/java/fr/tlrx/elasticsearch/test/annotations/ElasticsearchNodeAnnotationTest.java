@@ -19,7 +19,6 @@ import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
  * 
  */
 @RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode
 public class ElasticsearchNodeAnnotationTest {
 
 	private static final String CLUSTER_NAME = "cluster.name";
@@ -48,6 +47,10 @@ public class ElasticsearchNodeAnnotationTest {
 	@ElasticsearchNode(name = "node3-1", clusterName = "fourth-cluster-name")
 	Node node3_1;
 	
+	// This node has his own configuration file
+	@ElasticsearchNode(configFile = "fr/tlrx/elasticsearch/test/annotations/elasticsearch-node4.yml")
+	Node node4;
+	
 	@Test
 	public void testElasticsearchNodes(){
 		assertNotNull(node0);
@@ -57,6 +60,8 @@ public class ElasticsearchNodeAnnotationTest {
 		assertEquals(ElasticsearchNode.DEFAULT_CLUSTER_NAME, node0.settings().get(CLUSTER_NAME));
 		assertTrue(node0.settings().getAsBoolean(NODE_LOCAL, null));
 		assertTrue(node0.settings().getAsBoolean(NODE_DATA, null));
+		// This node will have default configuration file: /config/elasticsearch.yml
+		assertEquals("zone1", node0.settings().get("node.zone"));
 
 		assertEquals(node0, node0bis);
 		assertEquals("elasticsearch-test-node", node0bis.settings().get(NODE_NAME));
@@ -86,5 +91,14 @@ public class ElasticsearchNodeAnnotationTest {
 		
 		assertNotSame(node3, node3_1);
 		assertEquals(node3.settings().get(CLUSTER_NAME), node3_1.settings().get(CLUSTER_NAME));
+		
+		assertNotNull(node4);
+		assertEquals("node4", node4.settings().get(NODE_NAME));
+		assertEquals("my-cluster", node4.settings().get(CLUSTER_NAME));
+		assertFalse(node4.settings().getAsBoolean(NODE_DATA, null));
+		assertTrue(node4.settings().getAsBoolean(NODE_LOCAL, null));
+		// This node also has default configuration file: /config/elasticsearch.yml
+		assertEquals("zone1", node4.settings().get("node.zone"));
+		
 	}
 }

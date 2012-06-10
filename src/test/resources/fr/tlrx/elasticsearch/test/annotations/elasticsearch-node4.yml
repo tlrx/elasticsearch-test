@@ -1,0 +1,15 @@
+#Node name
+node.name: node4
+
+# Cluster name
+cluster.name: my-cluster
+
+# Index settings
+index.number_of_shards: 3
+index.number_of_replicas: 0
+
+node.data: false
+
+# Simple node property to check file loading
+node.zone: zone1
+
