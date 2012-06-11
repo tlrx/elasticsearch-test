@@ -46,6 +46,8 @@ public class ElasticsearchMappingAnnotationTest {
 				@ElasticsearchMapping(typeName = "book", 
 						source = false,
 						compress = false,
+						ttl = true,
+						ttlValue = "2d",
 						properties = { 
 							@ElasticsearchMappingField(name = "title", store = Store.Yes, type = Types.String),
 							@ElasticsearchMappingField(name = "author", store = Store.No, type = Types.String, index = Index.Not_Analyzed),
@@ -88,6 +90,12 @@ public class ElasticsearchMappingAnnotationTest {
             assertEquals(Boolean.FALSE, source.get("compress"));
             assertEquals(Boolean.FALSE, source.get("enabled"));
             
+            // Check TTL
+        	Map<String, Object> ttl = (Map<String, Object>) def.get("_ttl");
+            assertNotNull("_ttl must exists", ttl);
+            assertEquals(Boolean.TRUE, ttl.get("enabled"));
+            assertEquals(172800000, ttl.get("default"));
+           
 		    // Check properties
         	Map<String, Object> properties = (Map<String, Object>) def.get("properties");
             assertNotNull("properties must exists", properties);

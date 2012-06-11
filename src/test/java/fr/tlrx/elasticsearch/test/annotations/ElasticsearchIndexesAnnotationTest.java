@@ -1,6 +1,5 @@
 package fr.tlrx.elasticsearch.test.annotations;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.elasticsearch.action.admin.indices.exists.IndicesExistsResponse;
@@ -9,9 +8,6 @@ import org.elasticsearch.node.Node;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchAdminClient;
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndexes;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 
 /**
@@ -28,17 +24,6 @@ public class ElasticsearchIndexesAnnotationTest {
 	
 	@ElasticsearchAdminClient
 	AdminClient adminClient;
-		
-	@Test
-	@ElasticsearchIndexes(indexes = {})
-	public void testElasticsearchIndex(){
-		// Checks if a default index has been created
-		IndicesExistsResponse existResponse = adminClient.indices()
-				.prepareExists(ElasticsearchIndex.DEFAULT_NAME)
-				.execute().actionGet();
-		
-		assertFalse("Index must not exist", existResponse.exists());
-	}
 	
 	@Test
 	@ElasticsearchIndexes(indexes = {@ElasticsearchIndex(indexName = "people")})	

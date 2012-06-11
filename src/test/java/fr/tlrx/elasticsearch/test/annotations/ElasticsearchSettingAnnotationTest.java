@@ -36,10 +36,12 @@ public class ElasticsearchSettingAnnotationTest {
 	
 	@Test
 	@ElasticsearchIndexes(indexes = {
-			@ElasticsearchIndex(indexName = "library", settings = {
-					@ElasticsearchSetting(name = "number_of_shards", value = "2"),
-					@ElasticsearchSetting(name = "number_of_replicas", value = "1") }),
-			@ElasticsearchIndex(indexName = "people") })
+			@ElasticsearchIndex(indexName = "library", 
+					forceCreate = true,
+					settings = {
+						@ElasticsearchSetting(name = "number_of_shards", value = "2"),
+						@ElasticsearchSetting(name = "number_of_replicas", value = "1") }),
+				@ElasticsearchIndex(indexName = "people") })
 	public void testElasticsearchSettings() {
 
 		// Check custom settings on node
@@ -66,5 +68,4 @@ public class ElasticsearchSettingAnnotationTest {
 		assertEquals("1", indexSettings.get("index.number_of_shards"));
 		assertEquals("0", indexSettings.get("index.number_of_replicas"));
 	}
-
 }

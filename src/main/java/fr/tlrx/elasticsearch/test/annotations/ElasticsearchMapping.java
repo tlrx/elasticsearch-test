@@ -39,4 +39,14 @@ public @interface ElasticsearchMapping {
      * The source's "compress" value (default to false)
      */
     boolean compress() default false;
+    
+    /**
+     * Time To Live "enabled" value (default to false)
+     */
+    boolean ttl() default false; 
+    
+    /**
+     * Time To Live value
+     */
+    String ttlValue() default "";
 }

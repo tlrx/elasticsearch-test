@@ -121,12 +121,12 @@ public class VersionTest {
 
 		// Try to index book #2 with a custom version but no external
 		try {
-			IndexResponse response = client.prepareIndex("library", "book", "2")
+			client.prepareIndex("library", "book", "2")
 					.setSource(builder)
 					.setVersion(startVersion)
 					.execute()
 					.actionGet();
-
+			
 			fail("Expected a VersionConflictEngineException");
 		} catch (VersionConflictEngineException e) {
 			assertNotNull(e);

@@ -51,5 +51,15 @@ public @interface ElasticsearchIndex {
 	/**
 	 * Index configuration (settings, mappings etc), loaded from a file's path
 	 */
-	String loadFromFile() default "";
+	String settingsFile() default "";
+	
+	/**
+	 * Force the index creation is it already exists 
+	 */
+	boolean forceCreate() default false;
+	
+	/**
+	 * Delete all documents in index after test execution
+	 */
+	boolean cleanAfter() default true;
 }

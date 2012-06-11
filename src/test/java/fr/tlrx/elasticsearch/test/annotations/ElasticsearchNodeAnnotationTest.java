@@ -25,6 +25,8 @@ public class ElasticsearchNodeAnnotationTest {
 	private static final String NODE_NAME = "node.name";
 	private static final String NODE_LOCAL = "node.local";
 	private static final String NODE_DATA = "node.data";
+	private static final String INDEX_NUMBER_OF_SHARDS = "index.number_of_shards";
+	private static final String INDEX_NUMBER_OF_REPLICAS = "index.number_of_replicas";
 	
 	@ElasticsearchNode
 	Node node0;
@@ -62,6 +64,8 @@ public class ElasticsearchNodeAnnotationTest {
 		assertTrue(node0.settings().getAsBoolean(NODE_DATA, null));
 		// This node will have default configuration file: /config/elasticsearch.yml
 		assertEquals("zone1", node0.settings().get("node.zone"));
+		assertEquals("1", node0.settings().get(INDEX_NUMBER_OF_SHARDS));
+		assertEquals("0", node0.settings().get(INDEX_NUMBER_OF_REPLICAS));
 
 		assertEquals(node0, node0bis);
 		assertEquals("elasticsearch-test-node", node0bis.settings().get(NODE_NAME));
@@ -97,6 +101,9 @@ public class ElasticsearchNodeAnnotationTest {
 		assertEquals("my-cluster", node4.settings().get(CLUSTER_NAME));
 		assertFalse(node4.settings().getAsBoolean(NODE_DATA, null));
 		assertTrue(node4.settings().getAsBoolean(NODE_LOCAL, null));
+		assertEquals("3", node4.settings().get(INDEX_NUMBER_OF_SHARDS));
+		assertEquals("1", node4.settings().get(INDEX_NUMBER_OF_REPLICAS));
+		
 		// This node also has default configuration file: /config/elasticsearch.yml
 		assertEquals("zone1", node4.settings().get("node.zone"));
 		

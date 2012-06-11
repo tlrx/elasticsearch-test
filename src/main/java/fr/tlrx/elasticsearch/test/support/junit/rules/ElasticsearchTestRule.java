@@ -58,7 +58,13 @@ public class ElasticsearchTestRule extends AbstractElasticsearchRule {
                             if (isBefore) {
                                 ((MethodLevelElasticsearchAnnotationHandler) handler).handleBefore(annotation, instance, context);
                             } else {
-                                ((MethodLevelElasticsearchAnnotationHandler) handler).handleAfter(annotation, instance, context);
+                            	try {
+                            		((MethodLevelElasticsearchAnnotationHandler) handler).handleAfter(annotation, instance, context);	
+								} catch (Exception e) {
+									System.err.println(e.getMessage());
+									e.printStackTrace();
+								}
+                                
                             }
                         }
                     }
