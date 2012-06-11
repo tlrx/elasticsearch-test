@@ -21,7 +21,6 @@ import fr.tlrx.elasticsearch.test.annotations.ElasticsearchMapping;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchMappingField;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchMappingField.Types;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchSetting;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 
 /**
@@ -33,7 +32,7 @@ import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 @RunWith(ElasticsearchRunner.class)
 public class TtlTest {
 
-	@ElasticsearchNode(settings={@ElasticsearchSetting(name = "indices.ttl.interval", value = "30s")}, local = false)
+	@ElasticsearchNode
 	Node node;
 
 	@ElasticsearchClient
