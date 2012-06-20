@@ -66,7 +66,7 @@ public class OptimizeTest {
 		}
 		
 		BulkResponse bulkResponse = bulkRequestBuilder.setRefresh(true).execute().actionGet();
-		System.out.printf("Bulk request executed in %d ms, failures : %s.\r\n", bulkResponse.tookInMillis(), bulkResponse.hasFailures());
+		System.out.printf("Bulk request executed in %d ms, %d document(s) indexed, failures : %s.\r\n", bulkResponse.tookInMillis(), NB, bulkResponse.hasFailures());
 		
 		// Deletes some documents
 		for (int i = 0; i < NB; i = i + 9) {
@@ -83,6 +83,7 @@ public class OptimizeTest {
 				System.out.printf("Document [id:%d] deleted.\r\n", i);
 			}
 		}
+		System.out.printf("%d document(s) deleted.\r\n", deleted);
 	}
 	
 	@Test
@@ -97,6 +98,7 @@ public class OptimizeTest {
 		DocsStatus docsStatus = status.index(INDEX).docs();
 		
 		// Check docs status
+		System.out.printf("DocsStatus before optimize: %d numDocs, %d maxDocs, %d deletedDocs\r\n", docsStatus.getNumDocs(), docsStatus.getMaxDoc(), docsStatus.getDeletedDocs());
 		assertEquals((NB - deleted), docsStatus.getNumDocs());
 		assertEquals(NB, docsStatus.getMaxDoc());
 		assertEquals(deleted, docsStatus.getDeletedDocs());
@@ -113,6 +115,7 @@ public class OptimizeTest {
 		docsStatus = admin.indices().prepareStatus(INDEX).execute().actionGet().index(INDEX).docs();
 		
 		// Check again docs status
+		System.out.printf("DocsStatus after optimize: %d numDocs, %d maxDocs, %d deletedDocs\r\n", docsStatus.getNumDocs(), docsStatus.getMaxDoc(), docsStatus.getDeletedDocs());
 		assertEquals((NB - deleted), docsStatus.getNumDocs());
 		assertEquals((NB - deleted), docsStatus.getMaxDoc());
 		// Must be zero
