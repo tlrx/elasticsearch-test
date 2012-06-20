@@ -36,10 +36,10 @@ import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 @RunWith(ElasticsearchRunner.class)
 public class AliasesTest {
 
-	@ElasticsearchNode(name = "node0", local = false, data = true)
+	@ElasticsearchNode(name = "node0")
 	Node node0;
 
-	@ElasticsearchNode(name = "node1", local = false, data = true)
+	@ElasticsearchNode(name = "node1")
 	Node node1;
 
 	@ElasticsearchAdminClient(nodeName = "node0")
