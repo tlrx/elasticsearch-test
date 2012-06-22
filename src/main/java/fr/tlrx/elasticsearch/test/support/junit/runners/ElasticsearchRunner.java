@@ -9,6 +9,7 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 
 import fr.tlrx.elasticsearch.test.support.junit.handlers.annotations.ElasticsearchAdminClientAnnotationHandler;
+import fr.tlrx.elasticsearch.test.support.junit.handlers.annotations.ElasticsearchBulkRequestAnnotationHandler;
 import fr.tlrx.elasticsearch.test.support.junit.handlers.annotations.ElasticsearchClientAnnotationHandler;
 import fr.tlrx.elasticsearch.test.support.junit.handlers.annotations.ElasticsearchIndexAnnotationHandler;
 import fr.tlrx.elasticsearch.test.support.junit.handlers.annotations.ElasticsearchIndexesAnnotationHandler;
@@ -51,6 +52,7 @@ public class ElasticsearchRunner extends BlockJUnit4ClassRunner {
         // Be careful, order is important
         testRule.addHandler(new ElasticsearchIndexesAnnotationHandler());
         testRule.addHandler(new ElasticsearchIndexAnnotationHandler());
+        testRule.addHandler(new ElasticsearchBulkRequestAnnotationHandler());
         
         // Add a TestRule to manage method-level Elasticsearch annotations
         testRules.add(testRule);

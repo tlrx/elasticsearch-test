@@ -1,0 +1,15 @@
+{ "index" : { "_index" : "documents", "_type" : "doc1", "_id" : "7" } }
+{ "title" : "value7" }
+{ "create" : { "_index" : "documents", "_type" : "doc1", "_id" : "8" } }
+{ "title" : "value8" }
+{ "delete" : { "_index" : "documents", "_type" : "doc1", "_id" : "2" } }
+{ "create" : { "_index" : "documents", "_type" : "doc1", "_id" : "9" } }
+{ "title" : "value9" }
+{ "create" : { "_index" : "documents", "_type" : "doc1", "_id" : "10" } }
+{ "title" : "value10" }
+{ "delete" : { "_index" : "documents", "_type" : "doc1", "_id" : "5" } }
+{ "create" : { "_index" : "documents", "_type" : "doc1", "_id" : "11" } }
+{ "title" : "value11" }
+{ "delete" : { "_index" : "documents", "_type" : "doc1", "_id" : "6" } }
+{ "create" : { "_index" : "documents", "_type" : "doc1", "_id" : "12" } }
+{ "title" : "value12" }

@@ -14,7 +14,6 @@ import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.admin.indices.exists.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
 import org.elasticsearch.client.AdminClient;
-import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.ImmutableSettings.Builder;
 import org.elasticsearch.common.settings.Settings;
@@ -22,7 +21,6 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.node.Node;
 
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchAnalysis;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchAnalyzer;
@@ -40,7 +38,7 @@ import fr.tlrx.elasticsearch.test.support.junit.handlers.MethodLevelElasticsearc
  * @author tlrx
  * 
  */
-public class ElasticsearchIndexAnnotationHandler implements MethodLevelElasticsearchAnnotationHandler {
+public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandler implements MethodLevelElasticsearchAnnotationHandler {
 
 	public boolean support(Annotation annotation) {
 		return (annotation instanceof ElasticsearchIndex);
@@ -55,45 +53,10 @@ public class ElasticsearchIndexAnnotationHandler implements MethodLevelElasticse
 		
 		// Cleans (delete all documents) in the index
 		if (elasticsearchIndex.cleanAfter()) {
-			//clean(context, elasticsearchIndex.nodeName(), elasticsearchIndex.indexName());
+			clean(context, elasticsearchIndex.nodeName(), elasticsearchIndex.indexName());
 		}
-	}
-
-	/**
-	 * Creates an {@link AdminClient} given a node's name and the current
-	 * execution context
-	 * 
-	 * @param context
-	 * @param nodeName
-	 * @return
-	 * @throws Exception
-	 */
-	private AdminClient admin(Map<String, Object> context, String nodeName) throws Exception {
-		return client(context, nodeName).admin();
 	}
 	
-	/**
-	 * Creates an {@link Client} given a node's name and the current
-	 * execution context
-	 * 
-	 * @param context
-	 * @param nodeName
-	 * @return
-	 * @throws Exception
-	 */
-	private Client client(Map<String, Object> context, String nodeName) throws Exception {
-		// Get a node
-		Node node = (Node) context.get(nodeName);
-		if (node == null) {
-			if (context.size() == 1) {
-				node = (Node) context.values().iterator().next();
-			} else {
-				throw new Exception("Unable to manage index: nodeName must be defined.");
-			}
-		}
-		return node.client();
-	}
-
 	/**
 	 * Delete all documents in the index
 	 * 

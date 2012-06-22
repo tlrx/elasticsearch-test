@@ -10,7 +10,7 @@
 	<name>elasticsearch-test</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<elasticsearch.version>0.19.4</elasticsearch.version>
+		<elasticsearch.version>0.19.2</elasticsearch.version>
 	</properties>
 
 	<dependencies>

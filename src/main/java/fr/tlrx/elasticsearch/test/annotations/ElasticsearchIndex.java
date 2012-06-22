@@ -49,17 +49,17 @@ public @interface ElasticsearchIndex {
 	ElasticsearchAnalysis analysis() default @ElasticsearchAnalysis();
 	
 	/**
-	 * Index configuration (settings, mappings etc), loaded from a file's path
+	 * Index configuration (settings etc), loaded from a file's path
 	 */
 	String settingsFile() default "";
 	
 	/**
-	 * Force the index creation is it already exists 
+	 * Force the index creation (default to false)
 	 */
 	boolean forceCreate() default false;
 	
 	/**
-	 * Delete all documents in index after test execution
+	 * Delete all documents in index after test execution (default to false)
 	 */
-	boolean cleanAfter() default true;
+	boolean cleanAfter() default false;
 }
