@@ -103,4 +103,12 @@
 			<url>https://oss.sonatype.org/content/groups/public/</url>
 		</repository>
 	</repositories>
+	
+	<distributionManagement>
+		<repository>
+			<id>local-tmp-repo</id>
+			<name>Local Temporary Repository</name>
+			<url>file:///tmp/local_tmp_repo/</url>
+		</repository>
+	</distributionManagement>
 </project>
