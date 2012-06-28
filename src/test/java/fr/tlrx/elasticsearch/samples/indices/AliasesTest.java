@@ -56,6 +56,9 @@ public class AliasesTest {
 	})
 	public void testAliases() throws IOException {
 		
+		// Drop "library" index if already exists
+		adminClient.indices().prepareDelete("library").execute().actionGet();
+		
 		// Create an alias "library" that targets the index "library1"
 		IndicesAliasesResponse aliasReponse = adminClient.indices().prepareAliases()
 																.addAlias("library1", "library")

@@ -36,13 +36,13 @@ public class ElasticsearchAnalysisAnnotationTest {
 									@ElasticsearchFilter(name = "myLength", typeName = "length", 
 											settings = {
 												@ElasticsearchSetting(name = "min", value = "0"),
-												@ElasticsearchSetting(name = "max", value = "5"),
+												@ElasticsearchSetting(name = "max", value = "5")
 											}),
 									@ElasticsearchFilter(name = "myEdgeNGram", typeName = "edgeNGram",
 											settings = {
 												@ElasticsearchSetting(name = "min_gram", value = "2"),
 												@ElasticsearchSetting(name = "max_gram", value = "10"),
-												@ElasticsearchSetting(name = "side", value = "front"),
+												@ElasticsearchSetting(name = "side", value = "front")
 											})
 							},
 							analyzers = {

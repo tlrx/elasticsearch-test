@@ -4,7 +4,8 @@ Here you will find simple Java annotations that simplifies unit testing with "El
 h2. Versions
 
 |_. elasticsearch-test	|_. ElasticSearch|
-|   master (0.0.1)      |     0.19.4     |
+|   master (0.0.2)      |     0.19.7     |
+|   0.0.		|     0.19.4     |
 
 
 h2. How To
@@ -16,7 +17,7 @@ Add a new dependency in your Maven POM file:
 bc. <dependency>
   <groupId>fr.tlrx.elasticsearch</groupId>
   <artifactId>elasticsearch-test</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
 </dependency>
 
 
@@ -47,7 +48,11 @@ The library provides the following annotations:
 |   @ElasticsearchMapping      	|     Defines a mapping for an index and a document type     	|
 |   @ElasticsearchMappingField  |     Defines field properties in a mapping     		|
 |   @ElasticsearchSetting  	|     Defines settings (at node or index level) 		|
-
+|   @ElasticsearchBulkRequest  	|     Used to import data			  		|
+|   @ElasticsearchMappingMultiField  	|     Used to define a multi_field in the mapping properties			  		|
+|   @ElasticsearchAnalysis  	|     Used to define analysis settings of an ElasticsearchIndex			  		|
+|   @ElasticsearchAnalyzer  	|     Used to define an analyzer	 	  		|
+|   @ElasticsearchFilter  	|     Used to define an analysis filter 	  		|
 
 h3. @ElasticsearchNode
 
@@ -55,16 +60,19 @@ Used to instantiate an elasticsearch @Node@ in a unit test class.
 
 Simple node has default name "elasticsearch-test-node" and is part of default cluster name "elasticsearch-test-cluster". Node is local and can hold data.
 
-bc. package fr.tlrx.elasticsearch.samples.core;
-	@RunWith(ElasticsearchRunner.class)
-	public class VersionTest {
-		@ElasticsearchNode
-		Node node;
-		@Test
-		public void test(){
-			// Use of node
-		}
+<pre>package fr.tlrx.elasticsearch.samples.core;
+
+@RunWith(ElasticsearchRunner.class)
+public class VersionTest {
+
+        @ElasticsearchNode
+	Node node;
+	
+        @Test
+	public void test(){
+                // Use of node
 	}
+}</pre>
 
 Example with custom cluster and node names, and local set to true and data set to false:
 
@@ -73,10 +81,11 @@ Node node3;
 
 Example with custom settings:
 
-bc. @ElasticsearchNode(name = "node0", settings = {
+<pre>@ElasticsearchNode(name = "node0", settings = {
 	@ElasticsearchSetting(name = "http.enabled", value = "false"),
 	@ElasticsearchSetting(name = "node.zone", value = "zone_one") })
 Node node;
+</pre>
 
 h3. @ElasticsearchClient
 
@@ -89,84 +98,91 @@ Client client;
 
 Example with a predefined node:
 
-bc. @ElasticsearchNode(name = "node1")
+<pre>@ElasticsearchNode(name = "node1")
 Node node1;
+
 @ElasticsearchClient(nodeName = "node1")
-Client client1;
+Client client1;</pre>
 
 h3. @ElasticsearchAdminClient
 
 Same as @ElasticsearchClient@ but instantiates an @AdminClient@.
 
-bc. @ElasticsearchAdminClient
+<pre>@ElasticsearchAdminClient
 AdminClient adminClient0;
+
 @ElasticsearchNode(name = "node1")
 Node node1;
+
 @ElasticsearchAdminClient(nodeName = "node1")
-AdminClient adminClient1;
+AdminClient adminClient1;</pre>
 
 h3. @ElasticsearchIndex, @ElasticsearchIndexes
 
 Used to creates one or many index before a test method. A node must be instantiated before using this annotation.
 
-This example will create an index with default name "test":
+This example will create an index with default name @test@:
 
-bc. @ElasticsearchAdminClient
+<pre>@ElasticsearchAdminClient
 AdminClient adminClient;
+
 @Test
 @ElasticsearchIndex
-public void test(){...}
+public void test(){...}</pre>
 
 This example will create an index "people":
 
-bc. @Test
+<pre>@Test
 @ElasticsearchIndex(indexName = "people")
 public void test(){
-...
-}
-
+        ...
+}</pre>
 
 This example will create 2 indexs:
-<pre>
-	@Test
-	@ElasticsearchIndexes(indexes = {
-			@ElasticsearchIndex(indexName = "people1"),
-			@ElasticsearchIndex(indexName = "people2") })
-	public void test(){
-		...
-	}
-</pre>
 
+<pre>@Test
+@ElasticsearchIndexes(indexes = {
+   @ElasticsearchIndex(indexName = "people1"),
+   @ElasticsearchIndex(indexName = "people2") })
+public void test(){
+        ...
+}</pre>
+
+h3. Load data from JSON file with @ElasticsearchBulkRequest
+
+<pre>@Test
+@ElasticsearchIndex(indexName = "documents", forceCreate = true)
+@ElasticsearchBulkRequest(dataFile = "fr/tlrx/elasticsearch/test/annotations/documents/bulk1.json")
+public void test() {
+   // Data from JSON file are indexed
+}</pre>
 
 h3. @ElasticsearchMapping, @ElasticsearchMappingField and @ElasticsearchSetting
 
 Used to define the mappings and settings of an index
 
 This example will create 2 indexs, "people" and "library", with a mapping for document type "book":
-<pre>
-	@ElasticsearchNode
-	Node node;
-	
-	@Test
-	@ElasticsearchIndexes(indexes = {
-			@ElasticsearchIndex(indexName = "people", settings = {
-					@ElasticsearchSetting(name = "number_of_shards", value = "2"),
-					@ElasticsearchSetting(name = "number_of_replicas", value = "1") }),
-			@ElasticsearchIndex(indexName = "library",
-				mappings = { 
-					@ElasticsearchMapping(typeName = "book", 
-							properties = { 
-								@ElasticsearchMappingField(name = "title", store = Store.Yes, type = Types.String),
-								@ElasticsearchMappingField(name = "author", store = Store.Yes, type = Types.String)
-							})
-			})
-	})
-	public void test(){
-		...
-	}
-</pre>
+<pre>@ElasticsearchNode
+Node node;
 
+@Test
+@ElasticsearchIndexes(indexes = {
+   @ElasticsearchIndex(indexName = "people", settings = {
+      @ElasticsearchSetting(name = "number_of_shards", value = "2"),
+      @ElasticsearchSetting(name = "number_of_replicas", value = "1")
+   }),
+   @ElasticsearchIndex(indexName = "library",
+      mappings = {
+         @ElasticsearchMapping(typeName = "book",
+            properties = {
+                @ElasticsearchMappingField(name = "title", store = Store.Yes, type = Types.String),
+                @ElasticsearchMappingField(name = "author", store = Store.Yes, type = Types.String)
+            })
+      })
+   })
+public void test(){
+   ...
+}</pre>
 
-
-
+You can also look at "the unit tests for some inspiration":https://github.com/tlrx/elasticsearch-test/tree/master/src/test/java/fr/tlrx/elasticsearch
 
