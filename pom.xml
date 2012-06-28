@@ -78,8 +78,7 @@
 				<artifactId>downloads-maven-plugin</artifactId>
 				<version>0.5</version>
 				<configuration>
-					<description>${project.name} build of the ${project.version}
-						release</description>
+					<description>${project.name} build of the ${project.version} release</description>
 					<override>true</override>
 					<includeAttached>true</includeAttached>
 					<dryRun>false</dryRun>
