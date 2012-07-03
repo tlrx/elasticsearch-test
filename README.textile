@@ -4,8 +4,11 @@ Here you will find simple Java annotations that simplifies unit testing with "El
 h2. Versions
 
 |_. elasticsearch-test	|_. ElasticSearch|
-|   master (0.0.2)      |     0.19.7     |
-|   0.0.		|     0.19.4     |
+|   master (0.0.5)      |     0.19.8     |
+|   0.0.4               |     0.19.8     |
+|   0.0.3               |     0.19.7     |
+|   0.0.2               |     0.19.4     |
+|   0.0.1		|     0.19.4     |
 
 
 h2. How To
@@ -43,6 +46,7 @@ The library provides the following annotations:
 |   @ElasticsearchNode      	|     Instantiate an elasticsearch Node     			|
 |   @ElasticsearchClient      	|     Instantiate an elasticsearch Client     			|
 |   @ElasticsearchAdminClient  	|     Instantiate an elasticsearch AdminClient 			|
+|   @ElasticsearchTransportClient   |     Instantiate an elasticsearch TransportClient                  |
 |   @ElasticsearchIndexes  	|     Used to create multiple index	 			|
 |   @ElasticsearchIndex      	|     Creates an index			     			|
 |   @ElasticsearchMapping      	|     Defines a mapping for an index and a document type     	|
@@ -116,6 +120,25 @@ Node node1;
 
 @ElasticsearchAdminClient(nodeName = "node1")
 AdminClient adminClient1;</pre>
+
+h3. @ElasticsearchTransportClient
+
+Used to instantiate an elasticsearch @TransportClient@. The TransportClient can be local if needed (but you should consider using @ElasticsearchClient instead).
+
+Connect to a remote node with a TransportClient:
+
+<pre>@ElasticsearchTransportClient(local = false, clusterName = "external",
+					hostnames = {"host1", "host2"},
+					ports= {9300, 9300})
+	Client client;</pre>
+
+Example with a local node:
+
+<pre>@ElasticsearchNode
+Node node1;
+
+@ElasticsearchTransportClient
+Client client1;</pre>
 
 h3. @ElasticsearchIndex, @ElasticsearchIndexes
 
