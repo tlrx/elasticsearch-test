@@ -14,6 +14,7 @@ import fr.tlrx.elasticsearch.test.support.junit.handlers.annotations.Elasticsear
 import fr.tlrx.elasticsearch.test.support.junit.handlers.annotations.ElasticsearchIndexAnnotationHandler;
 import fr.tlrx.elasticsearch.test.support.junit.handlers.annotations.ElasticsearchIndexesAnnotationHandler;
 import fr.tlrx.elasticsearch.test.support.junit.handlers.annotations.ElasticsearchNodeAnnotationHandler;
+import fr.tlrx.elasticsearch.test.support.junit.handlers.annotations.ElasticsearchTransportClientAnnotationHandler;
 import fr.tlrx.elasticsearch.test.support.junit.rules.ElasticsearchClassRule;
 import fr.tlrx.elasticsearch.test.support.junit.rules.ElasticsearchFieldRule;
 import fr.tlrx.elasticsearch.test.support.junit.rules.ElasticsearchTestRule;
@@ -90,6 +91,7 @@ public class ElasticsearchRunner extends BlockJUnit4ClassRunner {
         fieldsRule.addHandler(new ElasticsearchNodeAnnotationHandler());
         fieldsRule.addHandler(new ElasticsearchClientAnnotationHandler());
         fieldsRule.addHandler(new ElasticsearchAdminClientAnnotationHandler());
+        fieldsRule.addHandler(new ElasticsearchTransportClientAnnotationHandler());
         
 		// Manage annotations on class attributes
         fieldsRule.executeBeforeTestExecution(instance);

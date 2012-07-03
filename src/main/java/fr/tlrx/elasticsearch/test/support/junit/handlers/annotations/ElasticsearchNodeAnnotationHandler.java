@@ -86,8 +86,10 @@ public class ElasticsearchNodeAnnotationHandler implements ClassLevelElasticsear
 
 		if (node == null) {
 			// No node with this name has been found, let's instantiate a new one
-			NodeBuilder nodeBuilder = NodeBuilder.nodeBuilder().settings(settings);
-			node = nodeBuilder.node();
+			node = NodeBuilder.nodeBuilder()
+								.settings(settings)
+								.local(elasticsearchNode.local())
+								.node();
 			context.put(nodeName, node);
 		}
 		return node;
@@ -102,7 +104,6 @@ public class ElasticsearchNodeAnnotationHandler implements ClassLevelElasticsear
 		Builder settingsBuilder = ImmutableSettings.settingsBuilder()
 				.put(NODE_NAME, elasticsearchNode.name())
 				.put("node.data", elasticsearchNode.data())
-				.put("node.local", elasticsearchNode.local())
 				.put("cluster.name", elasticsearchNode.clusterName())
 				.put("index.store.type", "memory")
 				.put("index.store.fs.memory.enabled", "true")
