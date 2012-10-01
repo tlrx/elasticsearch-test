@@ -60,7 +60,7 @@ public class ElasticsearchTransportClientAnnotationHandler implements ClassLevel
 			try {
 				field.setAccessible(true);
 				field.set(instance, client);
-				
+
 				context.put(client.toString(), client);
 			} catch (Exception e) {
 				LOGGER.severe("Unable to set transport client for field " + field.getName() + ":" + e.getMessage());
@@ -83,10 +83,8 @@ public class ElasticsearchTransportClientAnnotationHandler implements ClassLevel
 	public void afterClass(Object testClass, Map<String, Object> context) throws Exception {
 		// Closing all TransportClient
 		for (Object obj : context.values()) {
-			if (obj instanceof TransportClient) {
-				TransportClient client = (TransportClient)obj;
-				client.close();
-			}
+			TransportClient client = (TransportClient)obj;
+			client.close();
 		}
 	}
 }
