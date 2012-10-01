@@ -1,11 +1,12 @@
 package fr.tlrx.elasticsearch.test.annotations;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 import org.elasticsearch.action.admin.indices.exists.IndicesExistsResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.node.Node;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +28,7 @@ public class ElasticsearchTransportClientAnnotationTest {
 	@ElasticsearchTransportClient(local = false, clusterName = "external",
 									hostnames = {"127.0.0.1"},
 									ports= {9300})
-	Client client0;
+	TransportClient client0;
 	
 	@Test
 	@ElasticsearchIndex(indexName = "sites", nodeName = "node0")
@@ -47,7 +48,7 @@ public class ElasticsearchTransportClientAnnotationTest {
 	Node node1;
 
 	@ElasticsearchTransportClient
-	Client client1;
+	TransportClient client1;
 	
 	@Test
 	@ElasticsearchIndex(indexName = "sites")
@@ -57,6 +58,7 @@ public class ElasticsearchTransportClientAnnotationTest {
 		assertNotNull(client1);
 		assertNotSame(node0, node1);
 		assertNotSame(client0, client1);
+		assertFalse(client1.connectedNodes().isEmpty());
 		
 		// Checks if the index has been created
 		IndicesExistsResponse existResponse = client1.admin().indices()
