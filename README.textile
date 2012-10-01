@@ -204,21 +204,21 @@ Node node;
 
 @Test
 @ElasticsearchIndexes(indexes = {
-   @ElasticsearchIndex(indexName = "people", settings = {
-      @ElasticsearchSetting(name = "number_of_shards", value = "2"),
-      @ElasticsearchSetting(name = "number_of_replicas", value = "1")
-   }),
-   @ElasticsearchIndex(indexName = "library",
-      mappings = {
-         @ElasticsearchMapping(typeName = "book",
-            properties = {
-                @ElasticsearchMappingField(name = "title", store = Store.Yes, type = Types.String),
-                @ElasticsearchMappingField(name = "author", store = Store.Yes, type = Types.String)
-            })
-      })
-   })
+	@ElasticsearchIndex(indexName = "people", settings = {
+		@ElasticsearchSetting(name = "number_of_shards", value = "2"),
+		@ElasticsearchSetting(name = "number_of_replicas", value = "1")
+	}),
+	@ElasticsearchIndex(indexName = "library",
+		mappings = {
+			@ElasticsearchMapping(typeName = "book",
+				properties = {
+					@ElasticsearchMappingField(name = "title", store = Store.Yes, type = Types.String),
+					@ElasticsearchMappingField(name = "author", store = Store.Yes, type = Types.String)
+			})
+		})
+})
 public void test(){
-   ...
+	...
 }</pre>
 
 You can also look at "the unit tests for some inspiration":https://github.com/tlrx/elasticsearch-test/tree/master/src/test/java/fr/tlrx/elasticsearch
