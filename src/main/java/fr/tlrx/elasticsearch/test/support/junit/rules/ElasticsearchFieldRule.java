@@ -39,7 +39,7 @@ public class ElasticsearchFieldRule extends AbstractElasticsearchRule {
 			if (handler instanceof FieldLevelElasticsearchAnnotationHandler) {
 				FieldLevelElasticsearchAnnotationHandler fieldHandler = (FieldLevelElasticsearchAnnotationHandler) handler;
 
-				for(Field field : instance.getClass().getDeclaredFields()){
+				for(Field field : getAllFields(instance.getClass())){
 					// Iterate over annotations
 					for (Annotation annotation : field.getAnnotations()) {
 						if (handler.support(annotation)) {

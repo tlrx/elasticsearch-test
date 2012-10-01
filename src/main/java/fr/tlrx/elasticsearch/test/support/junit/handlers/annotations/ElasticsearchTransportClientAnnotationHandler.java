@@ -83,8 +83,10 @@ public class ElasticsearchTransportClientAnnotationHandler implements ClassLevel
 	public void afterClass(Object testClass, Map<String, Object> context) throws Exception {
 		// Closing all TransportClient
 		for (Object obj : context.values()) {
-			TransportClient client = (TransportClient)obj;
-			client.close();
+			if (obj instanceof TransportClient) {
+				TransportClient client = (TransportClient)obj;
+				client.close();
+			}		
 		}
 	}
 }

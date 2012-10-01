@@ -1,6 +1,7 @@
 package fr.tlrx.elasticsearch.test.support.junit.rules;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -85,4 +86,24 @@ public abstract class AbstractElasticsearchRule implements TestRule {
     protected void after(Collection<Annotation> annotations) throws Exception {
     	// Nothing here
     }
+    
+	/**
+	 * Get all declared and inherited attributes of a given class
+	 * 
+	 * @param type
+	 * @return a {@link List} of {@link Field}
+	 */
+	protected List<Field> getAllFields(Class<?> type) {
+		List<Field> fields = new ArrayList<Field>();
+		if (type != null) {
+			for (Field field : type.getDeclaredFields()) {
+				fields.add(field);
+			}
+
+			if (type.getSuperclass() != null) {
+				fields.addAll(getAllFields(type.getSuperclass()));
+			}
+		}
+		return fields;
+	}
 }
