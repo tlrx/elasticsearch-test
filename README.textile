@@ -4,11 +4,11 @@ Here you will find simple Java annotations that simplifies unit testing with "El
 h2. Versions
 
 |_. elasticsearch-test	|_. ElasticSearch|
-|   master (0.0.5)      |     0.19.8     |
+|   master (0.0.5)      |     0.19.9     |
 |   0.0.4               |     0.19.8     |
 |   0.0.3               |     0.19.7     |
 |   0.0.2               |     0.19.4     |
-|   0.0.1		|     0.19.4     |
+|   0.0.1				|     0.19.4     |
 
 
 h2. How To
@@ -20,7 +20,7 @@ Add a new dependency in your Maven POM file:
 bc. <dependency>
   <groupId>fr.tlrx.elasticsearch</groupId>
   <artifactId>elasticsearch-test</artifactId>
-  <version>0.0.2</version>
+  <version>0.0.5</version>
 </dependency>
 
 
@@ -161,15 +161,29 @@ public void test(){
         ...
 }</pre>
 
-This example will create 2 indexs:
+This example will create 2 indexs with settings:
 
 <pre>@Test
 @ElasticsearchIndexes(indexes = {
-   @ElasticsearchIndex(indexName = "people1"),
-   @ElasticsearchIndex(indexName = "people2") })
+			@ElasticsearchIndex(indexName = "library", 
+					forceCreate = true,
+					settings = {
+						@ElasticsearchSetting(name = "number_of_shards", value = "2"),
+						@ElasticsearchSetting(name = "number_of_replicas", value = "1") }),
+				@ElasticsearchIndex(indexName = "people") })
 public void test(){
         ...
 }</pre>
+
+This example will create an index with settings:
+
+<pre>@Test
+@Test
+@ElasticsearchIndex(indexName = "documents", settingsFile = "path/to/settings.json")
+public void test() {
+        ...
+}</pre>
+
 
 h3. Load data from JSON file with @ElasticsearchBulkRequest
 

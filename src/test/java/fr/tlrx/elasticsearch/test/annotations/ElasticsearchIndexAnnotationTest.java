@@ -3,7 +3,6 @@ package fr.tlrx.elasticsearch.test.annotations;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
@@ -134,9 +133,9 @@ public class ElasticsearchIndexAnnotationTest {
 		assertEquals("Document #1 must not exist", 0, client.prepareSearch("people").setQuery(QueryBuilders.idsQuery("person").addIds("1")).execute().actionGet().hits().totalHits());
 	}
 	
-	/*
+	
 	@Test
-	@ElasticsearchIndex(indexName = "documents", settingsFile = "fr/tlrx/elasticsearch/test/annotations/documents/2settings.json")
+	@ElasticsearchIndex(indexName = "documents", settingsFile = "fr/tlrx/elasticsearch/test/annotations/documents/settings.json")
 	public void testElasticsearchSettingsFile() {
 		// Check custom settings on index
 		ClusterStateResponse response = adminClient.cluster().prepareState()
@@ -146,7 +145,5 @@ public class ElasticsearchIndexAnnotationTest {
 		assertEquals("3", indexSettings.get("index.number_of_shards"));
 		assertEquals("7", indexSettings.get("index.number_of_replicas"));
 		assertEquals("true", indexSettings.get("index.analysis.filter.test_word_delimiter.split_on_numerics"));
-		fail("Update index settings test sucks!");
 	}
-	*/
 }

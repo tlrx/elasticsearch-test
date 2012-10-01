@@ -72,6 +72,7 @@ public class ElasticsearchRunner extends BlockJUnit4ClassRunner {
         // Declares the elasticsearch annotations handlers to use
         // Be careful, order is important
         classRule.addHandler(new ElasticsearchNodeAnnotationHandler());
+        classRule.addHandler(new ElasticsearchTransportClientAnnotationHandler());
         
         // Add a ClassRule to manage class-level Elasticsearch annotations
         classRules.add(classRule);

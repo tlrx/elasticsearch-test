@@ -31,28 +31,38 @@ public class ElasticsearchNodeAnnotationHandler implements ClassLevelElasticsear
 	/**
 	 * Elasticsearch home directory
 	 */
-	private static final String ES_HOME = "./elasticsearch-test";
+	private static final String ES_HOME = "./target/elasticsearch-test";
 	private static final String NODE_NAME = "node.name";
 	
 	public boolean support(Annotation annotation) {
 		return (annotation instanceof ElasticsearchNode);
 	}
 
+	public void beforeClass(Object testClass, Map<String, Object> context) throws Exception {
+		// Nothing to do here		
+	}
+	
 	public void handleBeforeClass(Annotation annotation, Object testClass, Map<String, Object> context) {
 		// Instantiate a node
 		buildNode((ElasticsearchNode) annotation, context);
 	}
 
 	public void handleAfterClass(Annotation annotation, Object testClass, Map<String, Object> context) {
-		// Shutdown all nodes
-		for (Object node : context.values()) {
-			if ((node instanceof Node) && (!((Node) node).isClosed())) {
-				((Node) node).close();
+		// Nothing to do here
+	}
+
+	public void afterClass(Object testClass, Map<String, Object> context) throws Exception {
+		for (Object obj : context.values()) {
+			if (obj instanceof Node) {
+				Node node = (Node) obj;
+
+				if (!node.isClosed()) {
+					node.close();
+				}
 			}
 		}
 		FileSystemUtils.deleteRecursively(new File(ES_HOME));
 	}
-
 
 	public void handleField(Annotation annotation, Object instance, Map<String, Object> context, Field field) throws Exception {
 		// Get the node

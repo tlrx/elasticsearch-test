@@ -6,6 +6,7 @@ package fr.tlrx.elasticsearch.samples.indices.analyze;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.elasticsearch.action.admin.indices.analyze.AnalyzeResponse;
 import org.elasticsearch.action.admin.indices.analyze.AnalyzeResponse.AnalyzeToken;
@@ -27,6 +28,8 @@ import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
  @ElasticsearchNode
 public class AnalyzeTest {
 
+	private final static Logger LOGGER = Logger.getLogger(AnalyzeTest.class.getName());
+	 
 	@ElasticsearchAdminClient
 	AdminClient adminClient;
 
@@ -60,12 +63,11 @@ public class AnalyzeTest {
 	 */
 	private void printTokens(List<AnalyzeToken> tokens) {
 		if(tokens != null){
-			System.out.printf("Printing %d tokens:\r\n", tokens.size());
+			LOGGER.info(String.format("Printing %d tokens:\r\n", tokens.size()));
 			for (AnalyzeToken token : tokens) {
-				System.out
-						.printf("\tToken %d term=[%s], type=[%s], startOffset=[%d], endOffset=[%d]\r\n",
+				LOGGER.info(String.format("\tToken %d term=[%s], type=[%s], startOffset=[%d], endOffset=[%d]\r\n",
 								token.position(), token.term(), token.type(),
-								token.startOffset(), token.endOffset());
+								token.startOffset(), token.endOffset()));
 			}
 		}		
 	}

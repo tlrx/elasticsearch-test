@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.Client;
@@ -22,6 +23,8 @@ import fr.tlrx.elasticsearch.test.support.junit.handlers.MethodLevelElasticsearc
  */
 public class ElasticsearchBulkRequestAnnotationHandler extends AbstractAnnotationHandler implements MethodLevelElasticsearchAnnotationHandler {
 
+	private final static Logger LOGGER = Logger.getLogger(ElasticsearchBulkRequestAnnotationHandler.class.getName()); 
+	
 	public boolean support(Annotation annotation) {
 		return (annotation instanceof ElasticsearchBulkRequest);
 	}
@@ -60,10 +63,10 @@ public class ElasticsearchBulkRequestAnnotationHandler extends AbstractAnnotatio
 											.execute()
 											.actionGet();
 			
-			System.out.printf("Bulk request for data file '%s' executed in %d ms with %sfailures", 
+			LOGGER.info(String.format("Bulk request for data file '%s' executed in %d ms with %sfailures", 
 						elasticsearchBulkRequest.dataFile(),
 						response.tookInMillis(),
-						response.hasFailures() ? "" : "no ");
+						response.hasFailures() ? "" : "no "));
 		} finally {
 			try {
 				if (output != null) {

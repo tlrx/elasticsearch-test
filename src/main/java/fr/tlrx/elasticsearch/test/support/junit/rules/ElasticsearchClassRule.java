@@ -58,17 +58,27 @@ public class ElasticsearchClassRule extends AbstractElasticsearchRule {
 			// Handle annotations at Before or After time
 			for (ElasticsearchAnnotationHandler handler : handlers) {
 				if (handler instanceof ClassLevelElasticsearchAnnotationHandler) {
-
+					ClassLevelElasticsearchAnnotationHandler classHandler = (ClassLevelElasticsearchAnnotationHandler) handler;
+					
+					// Call the handler first
+					if (isBefore) {
+						classHandler.beforeClass(testClass, context);
+					}
+					
 					// Iterate over annotations
 					for (Annotation annotation : annotations) {
 						if (handler.support(annotation)) {
-							ClassLevelElasticsearchAnnotationHandler classHandler = (ClassLevelElasticsearchAnnotationHandler) handler;
 							if (isBefore) {
 								classHandler.handleBeforeClass(annotation, testClass, context);
 							} else {
 								classHandler.handleAfterClass(annotation, testClass, context);
 							}
 						}
+					}
+					
+					// Call the handler after
+					if (!isBefore) {
+						classHandler.afterClass(testClass, context);
 					}
 				}
 			}

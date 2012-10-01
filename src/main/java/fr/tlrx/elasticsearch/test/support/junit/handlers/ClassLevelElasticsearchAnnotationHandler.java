@@ -14,7 +14,18 @@ import java.util.Map;
  * 
  */
 public interface ClassLevelElasticsearchAnnotationHandler extends ElasticsearchAnnotationHandler {
-
+    
+	/**
+     * Call the handler at class instanciation time
+     * 
+     * @param testClass
+     * @param context Test execution context
+     * @throws Exception
+     * 
+     * @see org.junit.BeforeClass
+     */
+    public void beforeClass(Object testClass, Map<String, Object> context) throws Exception;
+    
     /**
      * Handle an annotation at class instanciation time
      * 
@@ -38,4 +49,15 @@ public interface ClassLevelElasticsearchAnnotationHandler extends ElasticsearchA
      * @see org.junit.AfterClass
      */
     public void handleAfterClass(Annotation annotation, Object testClass, Map<String, Object> context) throws Exception;
+    
+    /**
+     * Call the handler at class destroying time
+     * 
+     * @param testClass
+     * @param context Test execution context
+     * @throws Exception
+     * 
+     * @see org.junit.AfterClass
+     */
+    public void afterClass(Object testClass, Map<String, Object> context) throws Exception;
 }

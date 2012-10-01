@@ -21,7 +21,7 @@ public @interface ElasticsearchMappingField {
     public static final String DEFAULT_ANALYZER = "default-analyzer";
     
 	public enum Types {
-		String
+		String, Integer, Long, Boolean, Date, Float, Double, Null
 	}
 	
 	public enum Store {

@@ -6,6 +6,7 @@ package fr.tlrx.elasticsearch.test.support.junit.handlers.annotations;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
@@ -14,6 +15,7 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.LocalTransportAddress;
 
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchTransportClient;
+import fr.tlrx.elasticsearch.test.support.junit.handlers.ClassLevelElasticsearchAnnotationHandler;
 import fr.tlrx.elasticsearch.test.support.junit.handlers.FieldLevelElasticsearchAnnotationHandler;
 
 /**
@@ -22,9 +24,10 @@ import fr.tlrx.elasticsearch.test.support.junit.handlers.FieldLevelElasticsearch
  * @author tlrx
  * 
  */
-public class ElasticsearchTransportClientAnnotationHandler implements
-		FieldLevelElasticsearchAnnotationHandler {
+public class ElasticsearchTransportClientAnnotationHandler implements ClassLevelElasticsearchAnnotationHandler, FieldLevelElasticsearchAnnotationHandler {
 
+	private final static Logger LOGGER = Logger.getLogger(ElasticsearchTransportClientAnnotationHandler.class.getName()); 
+	
 	public boolean support(Annotation annotation) {
 		return (annotation instanceof ElasticsearchTransportClient);
 	}
@@ -57,9 +60,32 @@ public class ElasticsearchTransportClientAnnotationHandler implements
 			try {
 				field.setAccessible(true);
 				field.set(instance, client);
+				
+				context.put(client.toString(), client);
 			} catch (Exception e) {
-				System.err.println("Unable to set transport client for field " + field.getName());
-				e.printStackTrace(System.err);
+				LOGGER.severe("Unable to set transport client for field " + field.getName() + ":" + e.getMessage());
+			}
+		}
+	}
+
+	public void beforeClass(Object testClass, Map<String, Object> context) throws Exception {
+		// Nothing to do here	
+	}
+	
+	public void handleBeforeClass(Annotation annotation, Object testClass, Map<String, Object> context) throws Exception {
+		// Nothing to do here		
+	}
+
+	public void handleAfterClass(Annotation annotation, Object testClass, Map<String, Object> context) throws Exception {
+		// Nothing to do here	
+	}
+
+	public void afterClass(Object testClass, Map<String, Object> context) throws Exception {
+		// Closing all TransportClient
+		for (Object obj : context.values()) {
+			if (obj instanceof TransportClient) {
+				TransportClient client = (TransportClient)obj;
+				client.close();
 			}
 		}
 	}

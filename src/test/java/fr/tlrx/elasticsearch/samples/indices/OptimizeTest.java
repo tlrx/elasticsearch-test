@@ -3,6 +3,7 @@ package fr.tlrx.elasticsearch.samples.indices;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import org.elasticsearch.action.admin.indices.status.DocsStatus;
 import org.elasticsearch.action.admin.indices.status.IndicesStatusResponse;
@@ -19,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import fr.tlrx.elasticsearch.samples.indices.analyze.AnalyzeTest;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchAdminClient;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchClient;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
@@ -33,6 +35,8 @@ import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 @RunWith(ElasticsearchRunner.class)
 public class OptimizeTest {
 
+	private final static Logger LOGGER = Logger.getLogger(OptimizeTest.class.getName());
+	
 	@ElasticsearchNode
 	Node node0;
 
@@ -66,7 +70,7 @@ public class OptimizeTest {
 		}
 		
 		BulkResponse bulkResponse = bulkRequestBuilder.setRefresh(true).execute().actionGet();
-		System.out.printf("Bulk request executed in %d ms, %d document(s) indexed, failures : %s.\r\n", bulkResponse.tookInMillis(), NB, bulkResponse.hasFailures());
+		LOGGER.info(String.format("Bulk request executed in %d ms, %d document(s) indexed, failures : %s.\r\n", bulkResponse.tookInMillis(), NB, bulkResponse.hasFailures()));
 		
 		// Deletes some documents
 		for (int i = 0; i < NB; i = i + 9) {
@@ -77,13 +81,13 @@ public class OptimizeTest {
 					.actionGet();
 
 			if (deleteResponse.notFound()) {
-				System.out.printf("Unable to delete document [id:%d], not found.\r\n", i);
+				LOGGER.info(String.format("Unable to delete document [id:%d], not found.\r\n", i));
 			} else {
 				deleted++;
-				System.out.printf("Document [id:%d] deleted.\r\n", i);
+				LOGGER.info(String.format("Document [id:%d] deleted.\r\n", i));
 			}
 		}
-		System.out.printf("%d document(s) deleted.\r\n", deleted);
+		LOGGER.info(String.format("%d document(s) deleted.\r\n", deleted));
 	}
 	
 	@Test
@@ -98,7 +102,7 @@ public class OptimizeTest {
 		DocsStatus docsStatus = status.index(INDEX).docs();
 		
 		// Check docs status
-		System.out.printf("DocsStatus before optimize: %d numDocs, %d maxDocs, %d deletedDocs\r\n", docsStatus.getNumDocs(), docsStatus.getMaxDoc(), docsStatus.getDeletedDocs());
+		LOGGER.info(String.format("DocsStatus before optimize: %d numDocs, %d maxDocs, %d deletedDocs\r\n", docsStatus.getNumDocs(), docsStatus.getMaxDoc(), docsStatus.getDeletedDocs()));
 		assertEquals((NB - deleted), docsStatus.getNumDocs());
 		assertEquals(NB, docsStatus.getMaxDoc());
 		assertEquals(deleted, docsStatus.getDeletedDocs());
@@ -115,7 +119,7 @@ public class OptimizeTest {
 		docsStatus = admin.indices().prepareStatus(INDEX).execute().actionGet().index(INDEX).docs();
 		
 		// Check again docs status
-		System.out.printf("DocsStatus after optimize: %d numDocs, %d maxDocs, %d deletedDocs\r\n", docsStatus.getNumDocs(), docsStatus.getMaxDoc(), docsStatus.getDeletedDocs());
+		LOGGER.info(String.format("DocsStatus after optimize: %d numDocs, %d maxDocs, %d deletedDocs\r\n", docsStatus.getNumDocs(), docsStatus.getMaxDoc(), docsStatus.getDeletedDocs()));
 		assertEquals((NB - deleted), docsStatus.getNumDocs());
 		assertEquals((NB - deleted), docsStatus.getMaxDoc());
 		// Must be zero

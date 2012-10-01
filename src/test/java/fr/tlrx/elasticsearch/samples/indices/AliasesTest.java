@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesResponse;
+import org.elasticsearch.action.admin.indices.exists.IndicesExistsResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
@@ -57,7 +58,10 @@ public class AliasesTest {
 	public void testAliases() throws IOException {
 		
 		// Drop "library" index if already exists
-		adminClient.indices().prepareDelete("library").execute().actionGet();
+		IndicesExistsResponse existsResponse = adminClient.indices().prepareExists("library").execute().actionGet();
+		if (existsResponse.exists()) {
+			adminClient.indices().prepareDelete("library").execute().actionGet();
+		}
 		
 		// Create an alias "library" that targets the index "library1"
 		IndicesAliasesResponse aliasReponse = adminClient.indices().prepareAliases()

@@ -6,6 +6,7 @@ package fr.tlrx.elasticsearch.test.support.junit.handlers.annotations;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.elasticsearch.ElasticSearchException;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
@@ -39,7 +40,9 @@ import fr.tlrx.elasticsearch.test.support.junit.handlers.MethodLevelElasticsearc
  * 
  */
 public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandler implements MethodLevelElasticsearchAnnotationHandler {
-
+	
+	private final static Logger LOGGER = Logger.getLogger(ElasticsearchIndexAnnotationHandler.class.getName()); 
+	
 	public boolean support(Annotation annotation) {
 		return (annotation instanceof ElasticsearchIndex);
 	}
@@ -107,23 +110,7 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
 			throw new Exception("Could not create index [" + indexName + "]");
 		}
 	}
-
-	/**
-	 * Update index settings
-	 * 
-	 * @param context
-	 * @param nodeName
-	 * @param indexName
-	 * @param settings
-	 * @throws ElasticSearchException
-	 * @throws Exception
-	 */
-	private void updateIndexSettings(Map<String, Object> context, String nodeName, String indexName, Settings settings) throws ElasticSearchException, Exception {
-		admin(context, nodeName).indices()
-				.prepareUpdateSettings(indexName)
-				.setSettings(settings)
-				.execute().actionGet();
-	}
+	
 	
 	/**
 	 * Put index mapping
@@ -333,12 +320,10 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
 			builder.endObject().endObject().endObject();
 			
 			// Prints generated mapping
-			System.out.printf("Mapping [%s]:\r\n%s\r\n", mapping.typeName(), builder.string());
+			LOGGER.info(String.format("Mapping [%s]:\r\n%s\r\n", mapping.typeName(), builder.string()));
 			
 		} catch (Exception e) {
-			System.err.println("Exception when building mapping for type "
-					+ mapping.typeName());
-			e.printStackTrace(System.err);
+			LOGGER.severe("Exception when building mapping for type " + mapping.typeName() + ": " + e.getMessage());
 		}
 		
 		return builder;

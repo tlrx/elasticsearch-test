@@ -1,0 +1,14 @@
+{ "index" : { "_index" : "books", "_type" : "book", "_id" : "1" } }
+{ "title" : "Les Misérables", "tags" : ["french", "literature", "novel"], "year" : "1862", "author" : {"firstname" : "Victor", "lastname" : "Hugo"} }
+{ "index" : { "_index" : "books", "_type" : "book", "_id" : "2" } }
+{ "title" : "Le Dernier Jour d'un condamné", "tags" : ["french", "literature"], "year" : "1829", "author" : {"firstname" : "Victor", "lastname" : "Hugo"} }
+{ "index" : { "_index" : "books", "_type" : "book", "_id" : "3" } }
+{ "title" : "Quatrevingt-treize", "tags" : ["french", "literature"], "year" : "1874", "author" : {"firstname" : "Victor", "lastname" : "Hugo"} }
+{ "index" : { "_index" : "books", "_type" : "book", "_id" : "4" } }
+{ "title" : "Les Orientales", "tags" : ["french", "poetry"], "year" : "1829", "author" : {"firstname" : "Victor", "lastname" : "Hugo"} }
+{ "index" : { "_index" : "books", "_type" : "book", "_id" : "5" } }
+{ "title" : "Les Châtiments", "tags" : ["french", "poetry"], "year" : "1853", "author" : {"firstname" : "Victor", "lastname" : "Hugo"} }
+{ "index" : { "_index" : "books", "_type" : "book", "_id" : "6" } }
+{ "title" : "Promenades dans Rome", "tags" : ["french", "literature"], "year" : "1829", "author" : {"firstname" : "Henri", "lastname" : "Beyle"} }
+{ "index" : { "_index" : "books", "_type" : "book", "_id" : "7" } }
+{ "title" : "Mont de piété", "tags" : ["french", "poetry"], "year" : "1919", "author" : {"firstname" : "André", "lastname" : "Breton"} }

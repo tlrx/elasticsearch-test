@@ -3,6 +3,7 @@ package fr.tlrx.elasticsearch.test.support.junit.rules;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.junit.rules.TestRule;
 
@@ -15,7 +16,9 @@ import fr.tlrx.elasticsearch.test.support.junit.handlers.MethodLevelElasticsearc
  * This class adds Before and After class rules, which will call {@link ElasticsearchAnnotationHandler}s.
  */
 public class ElasticsearchTestRule extends AbstractElasticsearchRule {
-
+	
+	private final static Logger LOGGER = Logger.getLogger(ElasticsearchTestRule.class.getName()); 
+	
     /**
      * The current test instance
      */
@@ -61,10 +64,8 @@ public class ElasticsearchTestRule extends AbstractElasticsearchRule {
                             	try {
                             		((MethodLevelElasticsearchAnnotationHandler) handler).handleAfter(annotation, instance, context);	
 								} catch (Exception e) {
-									System.err.println(e.getMessage());
-									e.printStackTrace();
+									LOGGER.severe(e.getMessage());
 								}
-                                
                             }
                         }
                     }
