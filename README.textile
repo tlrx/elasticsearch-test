@@ -4,7 +4,7 @@ Here you will find simple Java annotations that simplifies unit testing with "El
 h2. Versions
 
 |_. elasticsearch-test	|_. ElasticSearch|
-|   master (0.0.5)      |     0.19.9     |
+|   master (0.0.5)      |     0.20.0.RC1     |
 |   0.0.4               |     0.19.8     |
 |   0.0.3               |     0.19.7     |
 |   0.0.2               |     0.19.4     |
