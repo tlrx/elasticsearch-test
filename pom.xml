@@ -10,6 +10,13 @@
     <description>elasticsearch-test, a framework that makes ElasticSearch unit testing a breeze</description>
     <url>https://github.com/tlrx/elasticsearch-test</url>
 
+    <!-- Required for OSS maven repository deployment -->
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <elasticsearch.version>0.20.0.RC1</elasticsearch.version>
@@ -45,7 +52,7 @@
     </dependencies>
 
     <scm>
-        <url>scm:git:git@github.com:tlrx/elasticsearch-test.git</url>
+        <url>git:git@github.com:tlrx/elasticsearch-test.git</url>
         <connection>scm:git:git@github.com:tlrx/elasticsearch-test.git</connection>
         <developerConnection>scm:git:git@github.com:tlrx/elasticsearch-test.git</developerConnection>
     </scm>
