@@ -18,7 +18,7 @@ h3. Maven dependency
 Add a new dependency in your Maven POM file:
 
 bc. <dependency>
-  <groupId>fr.tlrx.elasticsearch</groupId>
+  <groupId>com.github.tlrx</groupId>
   <artifactId>elasticsearch-test</artifactId>
   <version>0.0.5</version>
 </dependency>
@@ -29,7 +29,7 @@ h3. JUnit Runner
 Define the JUnit @Runner@ to use in your test classes with the annotation @@RunWith(ElasticsearchRunner.class)@ :
 
 <pre>
-package fr.tlrx.elasticsearch.samples.core;
+package com.github.tlrx.elasticsearch.samples.core;
 
 @RunWith(ElasticsearchRunner.class)
 public class VersionTest {
@@ -64,7 +64,7 @@ Used to instantiate an elasticsearch @Node@ in a unit test class.
 
 Simple node has default name "elasticsearch-test-node" and is part of default cluster name "elasticsearch-test-cluster". Node is local and can hold data.
 
-<pre>package fr.tlrx.elasticsearch.samples.core;
+<pre>package com.github.tlrx.elasticsearch.samples.core;
 
 @RunWith(ElasticsearchRunner.class)
 public class VersionTest {
@@ -123,7 +123,7 @@ AdminClient adminClient1;</pre>
 
 h3. @ElasticsearchTransportClient
 
-Used to instantiate an elasticsearch @TransportClient@. The TransportClient can be local if needed (but you should consider using @ElasticsearchClient instead).
+Used to instantiate an elasticsearch @TransportClient@. By default the TransportClient will try to join localhost:9200.
 
 Connect to a remote node with a TransportClient:
 
@@ -132,13 +132,6 @@ Connect to a remote node with a TransportClient:
 					ports= {9300, 9300})
 	Client client;</pre>
 
-Example with a local node:
-
-<pre>@ElasticsearchNode
-Node node1;
-
-@ElasticsearchTransportClient
-Client client1;</pre>
 
 h3. @ElasticsearchIndex, @ElasticsearchIndexes
 
@@ -189,7 +182,7 @@ h3. Load data from JSON file with @ElasticsearchBulkRequest
 
 <pre>@Test
 @ElasticsearchIndex(indexName = "documents", forceCreate = true)
-@ElasticsearchBulkRequest(dataFile = "fr/tlrx/elasticsearch/test/annotations/documents/bulk1.json")
+@ElasticsearchBulkRequest(dataFile = "com/tlrx/elasticsearch/test/annotations/documents/bulk1.json")
 public void test() {
    // Data from JSON file are indexed
 }</pre>
@@ -221,5 +214,5 @@ public void test(){
 	...
 }</pre>
 
-You can also look at "the unit tests for some inspiration":https://github.com/tlrx/elasticsearch-test/tree/master/src/test/java/fr/tlrx/elasticsearch
+You can also look at "the unit tests for some inspiration":https://github.com/tlrx/elasticsearch-test/tree/master/src/test/java/com/tlrx/elasticsearch
 
