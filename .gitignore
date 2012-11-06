@@ -11,7 +11,8 @@ target/
 .classpath
 .project
 .settings
-
+.idea/
+elasticsearch-test.iml
 
 # Packages #
 ############
