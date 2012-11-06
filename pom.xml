@@ -12,6 +12,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<elasticsearch.version>0.20.0.RC1</elasticsearch.version>
+        <github.global.server>github</github.global.server>
 	</properties>
 
 	<licenses>
@@ -69,6 +70,19 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.8</version>
 			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -83,12 +97,11 @@
 				<groupId>com.github.github</groupId>
 				<artifactId>downloads-maven-plugin</artifactId>
 				<version>0.5</version>
-				<configuration>
-					<description>${project.name} build of the ${project.version} release</description>
-					<override>true</override>
-					<includeAttached>true</includeAttached>
-					<dryRun>false</dryRun>
-				</configuration>
+                <configuration>
+                    <description>${project.version} release of ${project.name}</description>
+                    <override>true</override>
+                    <includeAttached>true</includeAttached>
+                </configuration>
 				<executions>
 					<execution>
 						<goals>
@@ -100,20 +113,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<repositories>
-		<repository>
-			<id>sonatype</id>
-			<name>Sonatype Groups</name>
-			<url>https://oss.sonatype.org/content/groups/public/</url>
-		</repository>
-	</repositories>
-	
-	<distributionManagement>
-		<repository>
-			<id>local-tmp-repo</id>
-			<name>Local Temporary Repository</name>
-			<url>file:///tmp/local_tmp_repo/</url>
-		</repository>
-	</distributionManagement>
 </project>
