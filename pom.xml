@@ -3,7 +3,7 @@
 
     <groupId>com.github.tlrx</groupId>
     <artifactId>elasticsearch-test</artifactId>
-    <version>0.0.5</version>
+    <version>0.0.6-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>elasticsearch-test</name>
     <description>elasticsearch-test, a framework that makes ElasticSearch unit testing a breeze</description>
