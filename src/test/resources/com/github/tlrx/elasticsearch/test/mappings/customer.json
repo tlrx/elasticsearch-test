@@ -1,0 +1,8 @@
+{
+    "customer" : {
+        "properties" : {
+            "firstname" : {"type" : "string", "store" : "yes"}     ,
+            "lastname" : {"type" : "string", "store" : "yes"}
+        }
+    }
+}

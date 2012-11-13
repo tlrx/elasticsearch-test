@@ -214,5 +214,5 @@ public void test(){
 	...
 }</pre>
 
-You can also look at "the unit tests for some inspiration":https://github.com/tlrx/elasticsearch-test/tree/master/src/test/java/com/tlrx/elasticsearch
+You can also look at "the unit tests for some inspiration":https://github.com/tlrx/elasticsearch-test/tree/master/src/test/java/com/github/tlrx/elasticsearch
 

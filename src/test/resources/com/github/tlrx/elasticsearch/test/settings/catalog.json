@@ -1,0 +1,24 @@
+{
+  "index": {
+    "number_of_shards": 4,
+    "number_of_replicas": 1,
+    "analysis": {
+      "filter": {
+        "test_word_delimiter": {
+          "type": "word_delimiter",
+          "catenate_words": "true",
+          "split_on_numerics": "true",
+          "preserve_original": "true"
+        }
+      },
+      "analyzer": {
+        "basic_analyzer": {
+          "tokenizer": "whitespace",
+          "filter": [
+            "test_word_delimiter"
+          ]
+        }
+      }
+    }
+  }
+}

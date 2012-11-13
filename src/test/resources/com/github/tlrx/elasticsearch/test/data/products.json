@@ -1,0 +1,9 @@
+{ "index" : { "_index" : "catalog-2013", "_type" : "product", "_id" : "1" } }
+{ "field1" : "value1" }
+{ "delete" : { "_index" : "catalog-2013", "_type" : "product", "_id" : "2" } }
+{ "create" : { "_index" : "catalog-2013", "_type" : "product", "_id" : "3" } }
+{ "field1" : "value3" }
+{ "index" : { "_index" : "catalog-2013", "_type" : "product", "_id" : "4" } }
+{ "field1" : "value4" }
+{ "index" : { "_index" : "catalog-2013", "_type" : "product", "_id" : "5" } }
+{ "field1" : "value5" }
