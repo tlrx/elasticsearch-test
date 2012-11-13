@@ -1,3 +1,5 @@
+elasticsearch-test, a framework that makes elasticsearch unit testing a breeze.
+
 Here you will find simple Java annotations that simplifies unit testing with "Elasticsearch":http://www.elasticsearch.org/
 
 
