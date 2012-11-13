@@ -2,11 +2,14 @@ package com.github.tlrx.elasticsearch.test.provider;
 
 
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.io.FileSystemUtils;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
+
+import java.io.File;
 
 public class LocalClientProvider implements ClientProvider {
 
@@ -43,6 +46,8 @@ public class LocalClientProvider implements ClientProvider {
 
         if (!node.isClosed()) {
             node.close();
+
+            FileSystemUtils.deleteRecursively(new File("./target/elasticsearch-test/"), true);
         }
     }
 
