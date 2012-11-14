@@ -1,0 +1,11 @@
+{
+    "template" : "t*",
+    "settings" : {
+        "number_of_shards" : 7
+    },
+    "mappings" : {
+        "product" : {
+            "_source" : { "enabled" : false }
+        }
+    }
+}

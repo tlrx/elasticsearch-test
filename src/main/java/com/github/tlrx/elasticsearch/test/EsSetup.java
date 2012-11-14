@@ -81,4 +81,7 @@ public class EsSetup {
         return doExecute(new Count(indices));
     }
 
+    public static CreateTemplate createTemplate(String name) {
+        return new CreateTemplate(name);
+    }
 }
