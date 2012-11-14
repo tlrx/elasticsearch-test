@@ -19,13 +19,13 @@ public class BasicTest {
     public void setUp() throws Exception {
 
         // Using a local node & client
-        //esSetup = new EsSetup();
+        esSetup = new EsSetup();
 
-        // Using a remote client
+        /* Using a remote client
         Client client = new TransportClient()
                 .addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
         esSetup = new EsSetup(client);
-
+        */
 
         esSetup.execute(
                 deleteAll(),
@@ -51,7 +51,7 @@ public class BasicTest {
                         .withSource(fromClassPath("com/github/tlrx/elasticsearch/test/indices/catalog-2011.json")),
 
                 createIndex("catalog-2012")
-                        .withSettings(fromClassPath(getClass(), "prout.json")),
+                        .withSettings("com/github/tlrx/elasticsearch/test/settings/catalog.json"),
 
                 createIndex("catalog-2013")
                         .withSettings(fromClassPath("com/github/tlrx/elasticsearch/test/settings/catalog.json"))
