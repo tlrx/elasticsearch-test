@@ -60,7 +60,7 @@ public class EsSetup {
     }
 
     public static JSONProvider fromClassPath(Class klass, String resourceName) {
-        return new ClassPathJSONProvider(klass.getClassLoader(), resourceName);
+        return new ClassPathJSONProvider(klass, resourceName);
     }
 
     public static CreateIndex createIndex(String index) {

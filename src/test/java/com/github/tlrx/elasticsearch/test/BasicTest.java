@@ -51,7 +51,7 @@ public class BasicTest {
                         .withSource(fromClassPath("com/github/tlrx/elasticsearch/test/indices/catalog-2011.json")),
 
                 createIndex("catalog-2012")
-                        .withSettings(fromClassPath(getClass(), "com/github/tlrx/elasticsearch/test/settings/catalog.json")),
+                        .withSettings(fromClassPath(getClass(), "prout.json")),
 
                 createIndex("catalog-2013")
                         .withSettings(fromClassPath("com/github/tlrx/elasticsearch/test/settings/catalog.json"))

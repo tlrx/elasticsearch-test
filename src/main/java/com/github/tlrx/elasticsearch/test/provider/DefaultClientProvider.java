@@ -2,6 +2,7 @@ package com.github.tlrx.elasticsearch.test.provider;
 
 import com.github.tlrx.elasticsearch.test.EsSetupRuntimeException;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.Preconditions;
 import org.elasticsearch.common.unit.TimeValue;
 
 public class DefaultClientProvider implements ClientProvider {
@@ -10,10 +11,8 @@ public class DefaultClientProvider implements ClientProvider {
     private final boolean closeOnTerminate;
 
     public DefaultClientProvider(Client client, boolean closeClientOnTerminate) {
+        Preconditions.checkNotNull(client, "No Client specified");
         this.closeOnTerminate = closeClientOnTerminate;
-        if (client == null) {
-            throw new EsSetupRuntimeException("Client must not be null");
-        }
         this.client = client;
     }
 
