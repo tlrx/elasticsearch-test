@@ -36,4 +36,13 @@ public class Exists implements Request<Boolean> {
             return response.exists();
         }
     }
+
+    @Override
+    public String toString() {
+        return "exists [" +
+                "index='" + index + '\'' +
+                ", type='" + type + '\'' +
+                ", id='" + id + '\'' +
+                ']';
+    }
 }

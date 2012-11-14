@@ -1,8 +1,6 @@
 package com.github.tlrx.elasticsearch.test;
 
-import com.github.tlrx.elasticsearch.test.provider.ClientProvider;
-import com.github.tlrx.elasticsearch.test.provider.DefaultClientProvider;
-import com.github.tlrx.elasticsearch.test.provider.LocalClientProvider;
+import com.github.tlrx.elasticsearch.test.provider.*;
 import com.github.tlrx.elasticsearch.test.request.*;
 import org.elasticsearch.client.Client;
 
@@ -42,11 +40,27 @@ public class EsSetup {
             throw new EsSetupRuntimeException("Request must not be null");
         }
         provider.open();
-        return (T) request.execute(provider.client());
+        try {
+            return (T) request.execute(provider.client());
+        } catch (EsSetupRuntimeException e) {
+            throw new EsSetupRuntimeException("Exception when executing request " + request, e);
+        }
     }
 
     public void terminate() {
         provider.close();
+    }
+
+    public static JSONProvider fromClassPath(String path) {
+        return new ClassPathJSONProvider(Thread.currentThread().getContextClassLoader(), path);
+    }
+
+    public static JSONProvider fromClassPath(ClassLoader classLoader, String resourceName) {
+        return new ClassPathJSONProvider(classLoader, resourceName);
+    }
+
+    public static JSONProvider fromClassPath(Class klass, String resourceName) {
+        return new ClassPathJSONProvider(klass.getClassLoader(), resourceName);
     }
 
     public static CreateIndex createIndex(String index) {
@@ -84,4 +98,6 @@ public class EsSetup {
     public static CreateTemplate createTemplate(String name) {
         return new CreateTemplate(name);
     }
+
+
 }

@@ -5,14 +5,11 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import static com.github.tlrx.elasticsearch.test.EsSetup.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 public class BasicTest {
 
@@ -35,27 +32,40 @@ public class BasicTest {
 
                 createIndex("catalog-2009"),
 
-                createIndex("catalog-2010"),
+                createIndex("catalog-2010")
+                        .withSource("{\n" +
+                                "    \"settings\" : {\n" +
+                                "        \"number_of_shards\" : 2\n" +
+                                "    },\n" +
+                                "    \"mappings\" : {\n" +
+                                "        \"type2010\" : {\n" +
+                                "            \"_source\" : { \"enabled\" : false },\n" +
+                                "            \"properties\" : {\n" +
+                                "                \"field1\" : { \"type\" : \"string\", \"index\" : \"not_analyzed\" }\n" +
+                                "            }\n" +
+                                "        }\n" +
+                                "    }\n" +
+                                "}"),
 
                 createIndex("catalog-2011")
-                    .withSource("com/github/tlrx/elasticsearch/test/indices/catalog-2011.json"),
+                        .withSource(fromClassPath("com/github/tlrx/elasticsearch/test/indices/catalog-2011.json")),
 
                 createIndex("catalog-2012")
-                    .withSettings("com/github/tlrx/elasticsearch/test/settings/catalog.json"),
+                        .withSettings(fromClassPath(getClass(), "com/github/tlrx/elasticsearch/test/settings/catalog.json")),
 
                 createIndex("catalog-2013")
-                    .withSettings("com/github/tlrx/elasticsearch/test/settings/catalog.json")
-                    .withMapping("product", "com/github/tlrx/elasticsearch/test/mappings/product.json")
-                    .withMapping("customer", "com/github/tlrx/elasticsearch/test/mappings/customer.json")
-                    .withData("com/github/tlrx/elasticsearch/test/data/products.json"),
+                        .withSettings(fromClassPath("com/github/tlrx/elasticsearch/test/settings/catalog.json"))
+                        .withMapping("product", fromClassPath("com/github/tlrx/elasticsearch/test/mappings/product.json"))
+                        .withMapping("customer", fromClassPath("com/github/tlrx/elasticsearch/test/mappings/customer.json"))
+                        .withData(fromClassPath("com/github/tlrx/elasticsearch/test/data/products.json")),
 
                 createTemplate("template-1")
-                    .withSource("com/github/tlrx/elasticsearch/test/templates/template-1.json"),
+                        .withSource(fromClassPath("com/github/tlrx/elasticsearch/test/templates/template-1.json")),
 
                 createTemplate("template-2")
                         .withTemplate("test*")
-                        .withSettings("com/github/tlrx/elasticsearch/test/settings/catalog.json")
-                        .withMapping("customer", "com/github/tlrx/elasticsearch/test/mappings/customer.json")
+                        .withSettings(fromClassPath("com/github/tlrx/elasticsearch/test/settings/catalog.json"))
+                        .withMapping("customer", fromClassPath("com/github/tlrx/elasticsearch/test/mappings/customer.json"))
         );
     }
 
