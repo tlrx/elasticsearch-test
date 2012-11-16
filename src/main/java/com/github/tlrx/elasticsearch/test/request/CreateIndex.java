@@ -112,7 +112,7 @@ public class CreateIndex implements Request<Void> {
             if ((response.acknowledged()) && (bulkRequestBuilder != null)) {
                 BulkResponse bulkResponse = bulkRequestBuilder.setRefresh(true).execute().actionGet();
                 if (bulkResponse.hasFailures()) {
-                    throw new EsSetupRuntimeException("Bulk request has failures");
+                    throw new EsSetupRuntimeException("Bulk request has failures: "+bulkResponse.buildFailureMessage());
                 }
             }
         } catch (Exception e) {
