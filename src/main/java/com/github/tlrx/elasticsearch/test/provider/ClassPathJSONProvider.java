@@ -22,7 +22,9 @@ import com.github.tlrx.elasticsearch.test.EsSetupRuntimeException;
 import org.elasticsearch.common.Preconditions;
 import org.elasticsearch.common.io.Streams;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
@@ -50,7 +52,11 @@ public class ClassPathJSONProvider implements JSONProvider {
     public String toJson() {
         try {
             if (klass != null) {
-                return Streams.copyToString(new InputStreamReader(klass.getResourceAsStream(path), "UTF-8"));
+                InputStream inputStream=klass.getResourceAsStream(path);
+                if (inputStream==null) {
+                    throw new FileNotFoundException("Resource [" + path + "] not found in classpath with class  [" + klass.getName() + "]");
+                }
+                return Streams.copyToString(new InputStreamReader(inputStream, "UTF-8"));
             } else {
                 return Streams.copyToStringFromClasspath(classLoader, path);
             }
