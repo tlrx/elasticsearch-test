@@ -48,12 +48,12 @@ public class MyTest {
                                 .withMapping("type1", fromClassPath("path/to/mapping/of/type1.json"))
                                 .withData(fromClassPath("path/to/bulk.json")),
                         createTemplate("template-1")
-                                .withSource(fromClassPath("com/github/tlrx/elasticsearch/test/templates/template-1.json")),
+                                .withSource(fromClassPath("path/to/template1.json")),
                 );
         }
         @Test public void testMethod() {
                 // check if the index exists
-                assertTrue(esSetup.exists("catalog-2009"));
+                assertTrue(esSetup.exists("my_index_2"));
                 // Count the number of documents
                 Long nb = esSetup.countAll();
                 // Clean all indices
