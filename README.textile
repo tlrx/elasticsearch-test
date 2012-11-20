@@ -1,11 +1,11 @@
 elasticsearch-test, a framework that makes "ElasticSearch":http://www.elasticsearch.org/ unit testing a breeze.
 
 Here you will find:
-- a simple Java API that can be used to easily set up ElasticSearch in your unit tests
-- some Java annotations that simplifies JUnit testing with ElasticSearch
+* a <b>simple Java API</b> that can be used to easily set up ElasticSearch in your unit tests
+* some <b>Java annotations</b> that simplifies JUnit testing with ElasticSearch
 
 
-h2. Versions
+h3. Versions
 
 |_. elasticsearch-test	|_. ElasticSearch|
 |   master (0.0.5)      |     0.20.0.RC1     |
@@ -13,9 +13,6 @@ h2. Versions
 |   0.0.3               |     0.19.7     |
 |   0.0.2               |     0.19.4     |
 |   0.0.1				|     0.19.4     |
-
-
-h2. How To
 
 h3. Maven dependency
 
@@ -28,62 +25,50 @@ bc. <dependency>
 </dependency>
 
 
-h3. Using the Test API
+h2. Using the Java API
 
-The @EsSetup@ class can be used to start and stop a local ElasticSearch node. Then, the @EsSetup.execute()@ method 
-can be used to create or delete indices and import test data.
+The @EsSetup@ class helps to start and stop a local ElasticSearch node. Then, the @EsSetup.execute()@ method 
+can be used to create indices (with mappings, settings and templates support) and import test data.
 
-Here is a typical usage of @EsSetup@:
-<pre>import static com.github.tlrx.elasticsearch.test.EsSetup.*;
+The usage of @EsSetup@ is pretty self explanatory:
+<pre><code>
+import static com.github.tlrx.elasticsearch.test.EsSetup.*;
 
 public class MyTest {
         EsSetup esSetup;
-                
-        @Before
-        public void setUp() throws Exception {
+	@Before public void setUp() throws Exception {
                 // Instantiates a local node & client
                 esSetup = new EsSetup();
-
                 // Clean all, and creates some indices
-		esSetup.execute(
- 				deleteAll(),
- 
-                                createIndex("my_index_1"),
- 
- 				createIndex("my_index_2")
-					.withSettings(fromClassPath("path/to/settings.json"))
-					.withMapping("type1", fromClassPath("path/to/mapping/of/type1.json"))
-					.withData(fromClassPath("path/to/bulk.json")),
-
-                                createTemplate("template-1")
-                                        .withSource(fromClassPath("com/github/tlrx/elasticsearch/test/templates/template-1.json")),
-		);
-	}
-
-	@Test
-	public void testMethod() {
-
-        	// check if the index exists
-        	assertTrue(esSetup.exists("catalog-2009"));
-
-		// Count the number of documents
-		Long nb = esSetup.countAll();
-
-		// Clean all indices
-        	esSetup.execute(deleteAll());
-
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		// This will stop and clean the local node
-		esSetup.terminate();
-	}	
-}</pre>
+                esSetup.execute(
+                        deleteAll(),
+                        createIndex("my_index_1"),
+                        createIndex("my_index_2")
+                                .withSettings(fromClassPath("path/to/settings.json"))
+                                .withMapping("type1", fromClassPath("path/to/mapping/of/type1.json"))
+                                .withData(fromClassPath("path/to/bulk.json")),
+                        createTemplate("template-1")
+                                .withSource(fromClassPath("com/github/tlrx/elasticsearch/test/templates/template-1.json")),
+                );
+        }
+        @Test public void testMethod() {
+                // check if the index exists
+                assertTrue(esSetup.exists("catalog-2009"));
+                // Count the number of documents
+                Long nb = esSetup.countAll();
+                // Clean all indices
+                esSetup.execute(deleteAll());
+        }
+        @After public void tearDown() throws Exception {
+                // This will stop and clean the local node
+                esSetup.terminate();
+        }	
+}</code></pre>
+More usages can be found in "BasicTest.java":https://github.com/tlrx/elasticsearch-test/blob/master/src/test/java/com/github/tlrx/elasticsearch/test/BasicTest.java
 
 
 
-h3. Using with JUnit
+h2. Using with JUnit
 
 Define the JUnit @Runner@ to use in your test classes with the annotation @@RunWith(ElasticsearchRunner.class)@ :
 
