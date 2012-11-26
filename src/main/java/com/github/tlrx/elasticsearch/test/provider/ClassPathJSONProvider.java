@@ -52,8 +52,8 @@ public class ClassPathJSONProvider implements JSONProvider {
     public String toJson() {
         try {
             if (klass != null) {
-                InputStream inputStream=klass.getResourceAsStream(path);
-                if (inputStream==null) {
+                InputStream inputStream = klass.getResourceAsStream(path);
+                if (inputStream == null) {
                     throw new FileNotFoundException("Resource [" + path + "] not found in classpath with class  [" + klass.getName() + "]");
                 }
                 return Streams.copyToString(new InputStreamReader(inputStream, "UTF-8"));

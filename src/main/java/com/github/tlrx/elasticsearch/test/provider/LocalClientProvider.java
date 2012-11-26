@@ -41,7 +41,7 @@ public class LocalClientProvider implements ClientProvider {
     public void open() {
         if (node == null || node.isClosed()) {
             // Build and start the node
-            node = NodeBuilder.nodeBuilder().settings(buildNodeSettings()).local(false).node();
+            node = NodeBuilder.nodeBuilder().settings(buildNodeSettings()).local(true).node();
 
             // Get a client
             client = node.client();
