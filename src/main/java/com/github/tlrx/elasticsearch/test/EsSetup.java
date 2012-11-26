@@ -106,6 +106,13 @@ public class EsSetup {
     }
 
     /**
+     * @return the provided {@link Client}
+     */
+    public Client client() {
+        return provider.client();
+    }
+
+    /**
      * Executes one or more requests. The requests will use the provided client. Execution will stop if a request fails.
      *
      * @param requests an array of requests to execute
