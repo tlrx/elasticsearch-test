@@ -63,9 +63,11 @@ public class LocalClientProvider implements ClientProvider {
 
     @Override
     public void close() {
-        client().close();
+        if (client() != null) {
+            client.close();
+        }
 
-        if (!node.isClosed()) {
+        if ((node != null) && (!node.isClosed())) {
             node.close();
 
             FileSystemUtils.deleteRecursively(new File("./target/elasticsearch-test/"), true);
