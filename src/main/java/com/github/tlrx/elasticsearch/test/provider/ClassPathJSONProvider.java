@@ -50,6 +50,11 @@ public class ClassPathJSONProvider implements JSONProvider {
 
     @Override
     public String toJson() {
+        return toString();
+    }
+
+    @Override
+    public String toString() {
         try {
             if (klass != null) {
                 InputStream inputStream = klass.getResourceAsStream(path);
