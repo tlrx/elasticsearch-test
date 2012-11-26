@@ -22,6 +22,7 @@ import com.github.tlrx.elasticsearch.test.provider.*;
 import com.github.tlrx.elasticsearch.test.request.*;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.Preconditions;
+import org.elasticsearch.common.settings.Settings;
 
 /**
  * This class aims to simplify the ElasticSearch setup for unit testing. It allows to start and stop an embedded local
@@ -78,6 +79,13 @@ public class EsSetup {
      */
     public EsSetup() {
         this(new LocalClientProvider());
+    }
+
+    /**
+     * This constructor instantiates a local {@link org.elasticsearch.node.Node} with specific {@link Settings}.
+     */
+    public EsSetup(Settings settings) {
+        this(new LocalClientProvider(settings));
     }
 
     /**
@@ -197,6 +205,29 @@ public class EsSetup {
      */
     public static CreateIndex createIndex(String index) {
         return new CreateIndex(index);
+    }
+
+    /**
+     * Instantiates a request that can be used to index a document.
+     *
+     * @param index the index name
+     * @param type  the document type
+     * @return a {@link Index} request
+     */
+    public static Index index(String index, String type) {
+        return new Index(index, type);
+    }
+
+    /**
+     * Instantiates a request that can be used to index a document.
+     *
+     * @param index the index name
+     * @param type  the document type
+     * @param id    the document id
+     * @return a {@link Index} request
+     */
+    public static Index index(String index, String type, String id) {
+        return new Index(index, type, id);
     }
 
     /**

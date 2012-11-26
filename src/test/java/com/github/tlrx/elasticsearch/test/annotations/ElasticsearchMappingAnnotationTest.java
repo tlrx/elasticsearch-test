@@ -97,7 +97,7 @@ public class ElasticsearchMappingAnnotationTest {
             // Check title
             Map<String, Object> title = (Map<String, Object>) properties.get("title");
             assertEquals("string", title.get("type"));
-            assertEquals("yes", title.get("store"));
+            assertEquals(Boolean.TRUE, title.get("store"));
 
             // Check author
             Map<String, Object> author = (Map<String, Object>) properties.get("author");
@@ -109,7 +109,7 @@ public class ElasticsearchMappingAnnotationTest {
             Map<String, Object> description = (Map<String, Object>) properties.get("description");
             assertNull("index = analyzed must be null", description.get("index"));
             assertEquals("string", description.get("type"));
-            assertEquals("yes", description.get("store"));
+            assertEquals(Boolean.TRUE, description.get("store"));
             assertEquals("standard", description.get("analyzer"));
 
             // Check role
@@ -131,12 +131,10 @@ public class ElasticsearchMappingAnnotationTest {
             assertEquals("string", untouched.get("type"));
             assertNull("Store = No must be null", untouched.get("store"));
             assertEquals("not_analyzed", untouched.get("index"));
-            assertEquals("with_positions_offsets", untouched.get("term_vector"));
 
             // Check name.name
             Map<String, Object> nameName = (Map<String, Object>) fields.get("name");
             assertEquals("string", nameName.get("type"));
-            assertEquals("with_offsets", nameName.get("term_vector"));
 
         } catch (IOException e) {
             fail("Exception when reading mapping metadata");

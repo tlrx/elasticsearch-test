@@ -36,6 +36,14 @@ public class LocalClientProvider implements ClientProvider {
 
     private Node node = null;
     private Client client = null;
+    private Settings settings = null;
+
+    public LocalClientProvider() {
+    }
+
+    public LocalClientProvider(Settings settings) {
+        this.settings = settings;
+    }
 
     @Override
     public void open() {
@@ -75,7 +83,7 @@ public class LocalClientProvider implements ClientProvider {
     }
 
     protected Settings buildNodeSettings() {
-        // Build default settings
+        // Build settings
         ImmutableSettings.Builder builder = ImmutableSettings.settingsBuilder()
                 .put("node.name", "node-test")
                 .put("node.data", true)
@@ -89,6 +97,11 @@ public class LocalClientProvider implements ClientProvider {
                 .put("path.logs", "./target/elasticsearch-test/logs")
                 .put("index.number_of_shards", "1")
                 .put("index.number_of_replicas", "0");
+
+        if (settings != null) {
+            builder.put(settings);
+        }
+
         return builder.build();
     }
 }

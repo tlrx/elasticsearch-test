@@ -86,6 +86,10 @@ public class BasicTest {
         // test countAll()
         assertEquals(new Long(4), esSetup.countAll());
 
+        // test index()
+        esSetup.execute(index("catalog-2013", "product", "6").withSource("{ \"field1\" : \"value6\" }"));
+        assertEquals(new Long(5), esSetup.countAll());
+
         // test count(index)
         assertEquals(esSetup.countAll(), esSetup.count("catalog-2013"));
 
