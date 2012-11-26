@@ -21,6 +21,7 @@ package com.github.tlrx.elasticsearch.test.provider;
 
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.io.FileSystemUtils;
+import org.elasticsearch.common.network.NetworkUtils;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
@@ -49,7 +50,7 @@ public class LocalClientProvider implements ClientProvider {
     public void open() {
         if (node == null || node.isClosed()) {
             // Build and start the node
-            node = NodeBuilder.nodeBuilder().settings(buildNodeSettings()).local(true).node();
+            node = NodeBuilder.nodeBuilder().settings(buildNodeSettings()).node();
 
             // Get a client
             client = node.client();
@@ -87,16 +88,17 @@ public class LocalClientProvider implements ClientProvider {
         ImmutableSettings.Builder builder = ImmutableSettings.settingsBuilder()
                 .put("node.name", "node-test")
                 .put("node.data", true)
-                .put("cluster.name", "cluster-test")
+                .put("cluster.name", "cluster-test-" + NetworkUtils.getLocalAddress().getHostName())
                 .put("index.store.type", "memory")
                 .put("index.store.fs.memory.enabled", "true")
                 .put("gateway.type", "none")
-                .put("http.enabled", "true")
                 .put("path.data", "./target/elasticsearch-test/data")
                 .put("path.work", "./target/elasticsearch-test/work")
                 .put("path.logs", "./target/elasticsearch-test/logs")
                 .put("index.number_of_shards", "1")
-                .put("index.number_of_replicas", "0");
+                .put("index.number_of_replicas", "0")
+                .put("cluster.routing.schedule", "50ms")
+                .put("node.local", true);
 
         if (settings != null) {
             builder.put(settings);
