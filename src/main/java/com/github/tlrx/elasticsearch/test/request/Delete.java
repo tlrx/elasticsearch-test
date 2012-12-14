@@ -21,40 +21,27 @@ package com.github.tlrx.elasticsearch.test.request;
 import com.github.tlrx.elasticsearch.test.EsSetupRuntimeException;
 import com.github.tlrx.elasticsearch.test.provider.JSONProvider;
 import org.elasticsearch.ElasticSearchException;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 
 /**
- * A {@link com.github.tlrx.elasticsearch.test.request.Request} used to index documents.
+ * A {@link Request} used to delete documents.
  */
-public class Index implements Request<Void> {
+public class Delete implements Request<Void> {
 
-    private final IndexRequest request;
+    private final DeleteRequest request;
 
-    public Index(String index, String type) {
-        request = new IndexRequest(index, type).refresh(true);
-    }
-
-    public Index(String index, String type, String id) {
-        this(index, type);
-        request.id(id);
-    }
-
-    public Index withSource(String source) {
-        request.source(source);
-        return this;
-    }
-
-    public Index withSource(JSONProvider jsonProvider) {
-        request.source(jsonProvider.toJson());
-        return this;
+    public Delete(String index, String type, String id) {
+        request = new DeleteRequest(index, type, id).refresh(true);
     }
 
     @Override
     public Void execute(final Client client) throws ElasticSearchException {
         try {
-            IndexResponse response = client.index(request).get();
+            DeleteResponse response = client.delete(request).get();
         } catch (Exception e) {
             throw new EsSetupRuntimeException(e);
         }
@@ -63,9 +50,10 @@ public class Index implements Request<Void> {
 
     @Override
     public String toString() {
-        return "index [" +
+        return "delete [" +
                 "index='" + request.index() + "\'," +
                 "type='" + request.type() + '\'' +
+                "id='" + request.id() + '\'' +
                 ']';
     }
 }

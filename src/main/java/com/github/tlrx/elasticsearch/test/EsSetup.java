@@ -231,6 +231,18 @@ public class EsSetup {
     }
 
     /**
+     * Instantiates a request that can be used to delete a document.
+     *
+     * @param index the index name
+     * @param type  the document type
+     * @param id    the document id
+     * @return a {@link Delete} request
+     */
+    public static Delete delete(String index, String type, String id) {
+        return new Delete(index, type, id);
+    }
+
+    /**
      * Instantiates a request that can be used to delete an index
      *
      * @param index the index name

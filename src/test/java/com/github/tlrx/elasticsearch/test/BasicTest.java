@@ -27,6 +27,10 @@ public class BasicTest {
         esSetup = new EsSetup(client);
         */
 
+        /* Using specific Settings
+        esSetup = new EsSetup();
+         */
+
         esSetup.execute(
                 deleteAll(),
 
@@ -88,7 +92,13 @@ public class BasicTest {
 
         // test index()
         esSetup.execute(index("catalog-2013", "product", "6").withSource("{ \"field1\" : \"value6\" }"));
+        esSetup.execute(index("catalog-2013", "product", "7").withSource("{ \"field1\" : \"value7\" }"));
+        assertEquals(new Long(6), esSetup.countAll());
+
+        // test delete()
+        esSetup.execute(delete("catalog-2013", "product", "6"));
         assertEquals(new Long(5), esSetup.countAll());
+
 
         // test count(index)
         assertEquals(esSetup.countAll(), esSetup.count("catalog-2013"));
