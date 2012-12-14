@@ -8,7 +8,8 @@ Here you will find:
 h3. Versions
 
 |_. elasticsearch-test	|_. ElasticSearch|
-|   master (0.0.6)      |     0.20.0.RC1     |
+|   master (0.0.7)      |     0.20.1     |
+|   0.0.6     		|     0.20.0     |
 |   0.0.5		|     0.19.11    |
 |   0.0.4               |     0.19.8     |
 |   0.0.3               |     0.19.7     |
@@ -55,8 +56,12 @@ public class MyTest {
         @Test public void testMethod() {
                 // check if the index exists
                 assertTrue(esSetup.exists("my_index_2"));
+		// Index a new document
+		esSetup.execute(index("my_index_2", "type1", "1").withSource("{ \"field1\" : \"value1\" }"));
                 // Count the number of documents
                 Long nb = esSetup.countAll();
+		// Delete a document
+		esSetup.execute(delete("my_index_2", "type1", "1"));
                 // Clean all indices
                 esSetup.execute(deleteAll());
         }
