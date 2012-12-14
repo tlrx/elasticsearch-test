@@ -97,7 +97,7 @@ public class ElasticsearchMappingAnnotationTest {
             // Check title
             Map<String, Object> title = (Map<String, Object>) properties.get("title");
             assertEquals("string", title.get("type"));
-            assertEquals(Boolean.TRUE, title.get("store"));
+            assertEquals("yes", title.get("store"));
 
             // Check author
             Map<String, Object> author = (Map<String, Object>) properties.get("author");
@@ -109,7 +109,7 @@ public class ElasticsearchMappingAnnotationTest {
             Map<String, Object> description = (Map<String, Object>) properties.get("description");
             assertNull("index = analyzed must be null", description.get("index"));
             assertEquals("string", description.get("type"));
-            assertEquals(Boolean.TRUE, description.get("store"));
+            assertEquals("yes", description.get("store"));
             assertEquals("standard", description.get("analyzer"));
 
             // Check role
