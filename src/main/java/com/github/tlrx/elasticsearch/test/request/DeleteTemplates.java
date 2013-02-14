@@ -20,18 +20,22 @@ package com.github.tlrx.elasticsearch.test.request;
 
 import com.github.tlrx.elasticsearch.test.EsSetupRuntimeException;
 import org.elasticsearch.ElasticSearchException;
+import org.elasticsearch.action.admin.cluster.state.ClusterStateAction;
+import org.elasticsearch.action.admin.cluster.state.ClusterStateRequestBuilder;
+import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.action.admin.indices.template.delete.DeleteIndexTemplateAction;
 import org.elasticsearch.action.admin.indices.template.delete.DeleteIndexTemplateRequest;
 import org.elasticsearch.action.admin.indices.template.delete.DeleteIndexTemplateResponse;
 import org.elasticsearch.client.Client;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 /**
- * A {@link com.github.tlrx.elasticsearch.test.request.Request} used to delete one or more templates.
+ * A {@link com.github.tlrx.elasticsearch.test.request.Request} used to delete one, many templates or all templates.
  */
 public class DeleteTemplates implements Request<Void> {
     /**
@@ -46,7 +50,7 @@ public class DeleteTemplates implements Request<Void> {
     /**
      * Constructor
      *
-     * @param templates Templates to delete
+     * @param templates Templates to delete, if no template is specified all templates will be used
      */
     public DeleteTemplates(String... templates) {
         this.templates = templates;
@@ -60,11 +64,29 @@ public class DeleteTemplates implements Request<Void> {
         return this;
     }
 
+    /**
+     * Get the names of templates to delete, if no template is provided the complete list of templates is retrieved
+     */
+    private Collection<String> getTemplates(Client client) {
+        Collection<String> templatesColl;
+        if (this.templates==null || this.templates.length==0) {
+            // Retrieve all templates
+            ClusterStateRequestBuilder clusterStateRequestBuilder =
+                    ClusterStateAction.INSTANCE.newRequestBuilder(client.admin().cluster())
+                            .setFilterAll().setFilterMetaData(false);
+            ClusterStateResponse clusterStateResponse = clusterStateRequestBuilder.execute().actionGet();
+            templatesColl = clusterStateResponse.getState().getMetaData().getTemplates().keySet();
+        } else {
+            // Use provided templates
+            templatesColl = Arrays.asList(templates);
+        }
+        return templatesColl;
+    }
     @Override
     public Void execute(Client client) throws ElasticSearchException {
         Set<String> unacknowledgedTemplates = new HashSet<String>();
         EsSetupRuntimeException runtimeException = null;
-        for (String template : templates) {
+        for (String template : getTemplates(client)) {
             try {
                 DeleteIndexTemplateRequest request = new DeleteIndexTemplateRequest(template);
                 DeleteIndexTemplateResponse response = client.admin().indices()
