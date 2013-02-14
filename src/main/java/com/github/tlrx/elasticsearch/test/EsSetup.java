@@ -263,6 +263,16 @@ public class EsSetup {
     }
 
     /**
+     * Instantiates a request that can be used to delete given templates
+     *
+     * @param templates the templates names
+     * @return a {@link DeleteTemplates} request
+     */
+    public static DeleteTemplates deleteTemplates(String... templates) {
+        return new DeleteTemplates(templates);
+    }
+
+    /**
      * Instantiates a request that can be used to delete all indices/documents
      *
      * @return a {@link DeleteIndices} request
