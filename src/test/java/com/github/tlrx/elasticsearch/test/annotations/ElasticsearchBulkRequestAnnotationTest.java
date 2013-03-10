@@ -29,7 +29,7 @@ public class ElasticsearchBulkRequestAnnotationTest {
     public void testElasticsearchBulkRequest1() {
         // Count number of documents
         CountResponse countResponse = client.prepareCount("documents").setTypes("doc1").execute().actionGet();
-        assertEquals(6, countResponse.count());
+        assertEquals(6, countResponse.getCount());
     }
 
     @Test
@@ -38,6 +38,6 @@ public class ElasticsearchBulkRequestAnnotationTest {
     public void testElasticsearchBulkRequest2() {
         // Count number of documents
         CountResponse countResponse = client.prepareCount("documents").setTypes("doc1").execute().actionGet();
-        assertEquals(9, countResponse.count());
+        assertEquals(9, countResponse.getCount());
     }
 }

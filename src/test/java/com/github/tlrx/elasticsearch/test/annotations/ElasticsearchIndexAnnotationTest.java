@@ -42,7 +42,7 @@ public class ElasticsearchIndexAnnotationTest {
                 .prepareExists(ElasticsearchIndex.DEFAULT_NAME)
                 .execute().actionGet();
 
-        assertTrue("Index must exist", existResponse.exists());
+        assertTrue("Index must exist", existResponse.isExists());
     }
 
     @Test
@@ -53,7 +53,7 @@ public class ElasticsearchIndexAnnotationTest {
                 .prepareExists("people")
                 .execute().actionGet();
 
-        assertTrue("Index must exist", existResponse.exists());
+        assertTrue("Index must exist", existResponse.isExists());
 
         // Index a simple doc
         client.prepareIndex("people", "person", "1")
@@ -71,10 +71,10 @@ public class ElasticsearchIndexAnnotationTest {
                 .prepareExists("people")
                 .execute().actionGet();
 
-        assertTrue("Index must exist", existResponse.exists());
+        assertTrue("Index must exist", existResponse.isExists());
 
         // Check if document is still here
-        assertTrue("Document #1 must be found", client.prepareGet("people", "person", "1").execute().actionGet().exists());
+        assertTrue("Document #1 must be found", client.prepareGet("people", "person", "1").execute().actionGet().isExists());
     }
 
     @Test
@@ -85,10 +85,10 @@ public class ElasticsearchIndexAnnotationTest {
                 .prepareExists("people")
                 .execute().actionGet();
 
-        assertTrue("Index must exist", existResponse.exists());
+        assertTrue("Index must exist", existResponse.isExists());
 
         // Check that document has been cleaned/deleted after previous @Test method execution
-        assertFalse("Document #1 must be found", client.prepareGet("people", "person", "1").execute().actionGet().exists());
+        assertFalse("Document #1 must be found", client.prepareGet("people", "person", "1").execute().actionGet().isExists());
 
         // Index a simple doc
         client.prepareIndex("people", "person", "1")
@@ -106,10 +106,10 @@ public class ElasticsearchIndexAnnotationTest {
                 .prepareExists("people")
                 .execute().actionGet();
 
-        assertTrue("Index must exist", existResponse.exists());
+        assertTrue("Index must exist", existResponse.isExists());
 
         // Check if document is still here
-        assertTrue("Document #1 must be found", client.prepareGet("people", "person", "1").execute().actionGet().exists());
+        assertTrue("Document #1 must be found", client.prepareGet("people", "person", "1").execute().actionGet().isExists());
     }
 
 
@@ -121,12 +121,12 @@ public class ElasticsearchIndexAnnotationTest {
                 .prepareExists("people")
                 .execute().actionGet();
 
-        assertTrue("Index must exist", existResponse.exists());
+        assertTrue("Index must exist", existResponse.isExists());
 
         adminClient.cluster().prepareHealth("people").request().waitForGreenStatus();
 
         // Check that document has been cleaned/deleted after previous @Test method execution
-        assertEquals("Document #1 must not exist", 0, client.prepareSearch("people").setQuery(QueryBuilders.idsQuery("person").addIds("1")).execute().actionGet().hits().totalHits());
+        assertEquals("Document #1 must not exist", 0, client.prepareSearch("people").setQuery(QueryBuilders.idsQuery("person").addIds("1")).execute().actionGet().getHits().totalHits());
     }
 
 
@@ -137,7 +137,7 @@ public class ElasticsearchIndexAnnotationTest {
         ClusterStateResponse response = adminClient.cluster().prepareState()
                 .execute().actionGet();
 
-        Settings indexSettings = response.state().metaData().index("documents").settings();
+        Settings indexSettings = response.getState().metaData().index("documents").settings();
         assertEquals("3", indexSettings.get("index.number_of_shards"));
         assertEquals("7", indexSettings.get("index.number_of_replicas"));
         assertEquals("true", indexSettings.get("index.analysis.filter.test_word_delimiter.split_on_numerics"));

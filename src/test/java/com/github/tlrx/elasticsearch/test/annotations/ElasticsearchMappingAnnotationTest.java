@@ -63,7 +63,7 @@ public class ElasticsearchMappingAnnotationTest {
                 .prepareExists("library")
                 .execute().actionGet();
 
-        assertTrue("Index must exist", existResponse.exists());
+        assertTrue("Index must exist", existResponse.isExists());
 
         // Checks if mapping has been created
         ClusterStateResponse stateResponse = adminClient.cluster()

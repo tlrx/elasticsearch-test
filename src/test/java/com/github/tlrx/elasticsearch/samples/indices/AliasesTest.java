@@ -51,7 +51,7 @@ public class AliasesTest {
 
         // Drop "library" index if already exists
         IndicesExistsResponse existsResponse = adminClient.indices().prepareExists("library").execute().actionGet();
-        if (existsResponse.exists()) {
+        if (existsResponse.isExists()) {
             adminClient.indices().prepareDelete("library").execute().actionGet();
         }
 
@@ -60,7 +60,7 @@ public class AliasesTest {
                 .addAlias("library1", "library")
                 .execute()
                 .actionGet();
-        assertTrue(aliasReponse.acknowledged());
+        assertTrue(aliasReponse.isAcknowledged());
 
         // Index book #1 in the index "library1"
         IndexResponse indexResponse = client
@@ -71,15 +71,15 @@ public class AliasesTest {
                                 .field("title", "Les Miserables")
                                 .field("author", "Victor Hugo").endObject())
                 .execute().actionGet();
-        assertNotNull(indexResponse.id());
+        assertNotNull(indexResponse.getId());
 
         // Retrieves book #1 on index "library1"
         GetResponse getResponse = client.prepareGet("library1", "book", "1").execute().actionGet();
-        assertTrue(getResponse.exists());
+        assertTrue(getResponse.isExists());
 
         // Retrieves book #1 on alias "library"
         getResponse = client.prepareGet("library", "book", "1").execute().actionGet();
-        assertTrue(getResponse.exists());
+        assertTrue(getResponse.isExists());
 
         // Index another book #1 in the index "library2"
         indexResponse = client
@@ -90,21 +90,21 @@ public class AliasesTest {
                                 .field("title", "Notre-Dame de Paris")
                                 .field("author", "Victor Hugo").endObject())
                 .execute().actionGet();
-        assertNotNull(indexResponse.id());
+        assertNotNull(indexResponse.getId());
 
         // Retrieves another book #1 on index "library2"
         getResponse = client.prepareGet("library2", "book", "1").execute().actionGet();
-        assertTrue(getResponse.exists());
+        assertTrue(getResponse.isExists());
 
         // Create an alias "library" that targets the index "library2"
         aliasReponse = adminClient.indices().prepareAliases()
                 .addAlias("library2", "library")
                 .execute()
                 .actionGet();
-        assertTrue(aliasReponse.acknowledged());
+        assertTrue(aliasReponse.isAcknowledged());
 
         // Search for all books in alias "library"
         SearchResponse searchResponse = client.prepareSearch("library").execute().actionGet();
-        assertEquals(2, searchResponse.hits().totalHits());
+        assertEquals(2, searchResponse.getHits().getTotalHits());
     }
 }

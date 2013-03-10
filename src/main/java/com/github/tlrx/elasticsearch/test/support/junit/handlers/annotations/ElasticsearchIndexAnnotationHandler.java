@@ -76,7 +76,7 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
      */
     private void deleteIndex(Map<String, Object> context, String nodeName, String indexName) throws ElasticSearchException, Exception {
         DeleteIndexResponse response = admin(context, nodeName).indices().prepareDelete(indexName).execute().actionGet();
-        if (!response.acknowledged()) {
+        if (!response.isAcknowledged()) {
             throw new Exception("Could not delete index [" + indexName + "]");
         }
     }
@@ -97,7 +97,7 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
             builder.setSettings(settings);
         }
         CreateIndexResponse response = builder.execute().actionGet();
-        if (!response.acknowledged()) {
+        if (!response.isAcknowledged()) {
             throw new Exception("Could not create index [" + indexName + "]");
         }
     }
@@ -120,7 +120,7 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
                 .setType(type)
                 .setSource(mappingBuilder)
                 .execute().actionGet();
-        if (!response.acknowledged()) {
+        if (!response.isAcknowledged()) {
             throw new Exception("Could not put mapping [" + type + "] for index [" + indexName + "]");
         }
     }
@@ -140,7 +140,7 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
                 .prepareExists(elasticsearchIndex.indexName()).execute()
                 .actionGet();
 
-        if (existResponse.exists()) {
+        if (existResponse.isExists()) {
             // Index already exists, drop it if forceCreate = true
             if (elasticsearchIndex.forceCreate()) {
 

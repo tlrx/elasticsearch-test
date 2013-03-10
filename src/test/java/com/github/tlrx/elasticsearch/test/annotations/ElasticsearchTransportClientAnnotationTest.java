@@ -37,7 +37,7 @@ public class ElasticsearchTransportClientAnnotationTest {
         IndicesExistsResponse existResponse = client0.admin().indices()
                 .prepareExists("sites")
                 .execute().actionGet();
-        assertTrue("Index must exist", existResponse.exists());
+        assertTrue("Index must exist", existResponse.isExists());
     }
 
     @ElasticsearchNode(local = false)
@@ -62,6 +62,6 @@ public class ElasticsearchTransportClientAnnotationTest {
         IndicesExistsResponse existResponse = client1.admin().indices()
                 .prepareExists("sites")
                 .execute().actionGet();
-        assertTrue("Index must exist", existResponse.exists());
+        assertTrue("Index must exist", existResponse.isExists());
     }
 }

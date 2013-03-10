@@ -79,16 +79,16 @@ public class TtlTest {
                 .actionGet();
 
         // Get event #1
-        GetResponse getResponse = client.prepareGet("events", "event", indexResponse1.id()).execute().actionGet();
-        assertTrue("Event 1 is not deleted yet", getResponse.exists());
+        GetResponse getResponse = client.prepareGet("events", "event", indexResponse1.getId()).execute().actionGet();
+        assertTrue("Event 1 is not deleted yet", getResponse.isExists());
 
         // Get event #2
-        getResponse = client.prepareGet("events", "event", indexResponse2.id()).execute().actionGet();
-        assertTrue("Event 2 is not deleted yet", getResponse.exists());
+        getResponse = client.prepareGet("events", "event", indexResponse2.getId()).execute().actionGet();
+        assertTrue("Event 2 is not deleted yet", getResponse.isExists());
 
         // Get event #3
-        getResponse = client.prepareGet("events", "event", indexResponse3.id()).execute().actionGet();
-        assertTrue("Event 3 is not deleted yet", getResponse.exists());
+        getResponse = client.prepareGet("events", "event", indexResponse3.getId()).execute().actionGet();
+        assertTrue("Event 3 is not deleted yet", getResponse.isExists());
 
         // Wait 90s
         try {
@@ -98,16 +98,16 @@ public class TtlTest {
         }
 
         // Get event #1 again
-        getResponse = client.prepareGet("events", "event", indexResponse1.id()).execute().actionGet();
-        assertFalse("Event 1 must be deleted now", getResponse.exists());
+        getResponse = client.prepareGet("events", "event", indexResponse1.getId()).execute().actionGet();
+        assertFalse("Event 1 must be deleted now", getResponse.isExists());
 
         // Get event #2 again
-        getResponse = client.prepareGet("events", "event", indexResponse2.id()).execute().actionGet();
-        assertTrue("Event 2 is not deleted yet", getResponse.exists());
+        getResponse = client.prepareGet("events", "event", indexResponse2.getId()).execute().actionGet();
+        assertTrue("Event 2 is not deleted yet", getResponse.isExists());
 
         // Get event #3
-        getResponse = client.prepareGet("events", "event", indexResponse3.id()).execute().actionGet();
-        assertTrue("Event 3 is not deleted yet", getResponse.exists());
+        getResponse = client.prepareGet("events", "event", indexResponse3.getId()).execute().actionGet();
+        assertTrue("Event 3 is not deleted yet", getResponse.isExists());
 
         // Wait 90s again
         try {
@@ -117,16 +117,16 @@ public class TtlTest {
         }
 
         // Get event #1 again
-        getResponse = client.prepareGet("events", "event", indexResponse1.id()).execute().actionGet();
-        assertFalse("Event 1 must be deleted now", getResponse.exists());
+        getResponse = client.prepareGet("events", "event", indexResponse1.getId()).execute().actionGet();
+        assertFalse("Event 1 must be deleted now", getResponse.isExists());
 
         // Get event #1 again
-        getResponse = client.prepareGet("events", "event", indexResponse2.id()).execute().actionGet();
-        assertFalse("Event 2 must be deleted now", getResponse.exists());
+        getResponse = client.prepareGet("events", "event", indexResponse2.getId()).execute().actionGet();
+        assertFalse("Event 2 must be deleted now", getResponse.isExists());
 
         // Get event #3
-        getResponse = client.prepareGet("events", "event", indexResponse3.id()).execute().actionGet();
-        assertTrue("Event 3 must be the survivor", getResponse.exists());
+        getResponse = client.prepareGet("events", "event", indexResponse3.getId()).execute().actionGet();
+        assertTrue("Event 3 must be the survivor", getResponse.isExists());
     }
 
 }

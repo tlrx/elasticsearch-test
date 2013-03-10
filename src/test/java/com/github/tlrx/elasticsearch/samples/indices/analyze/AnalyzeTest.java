@@ -41,8 +41,8 @@ public class AnalyzeTest {
                 .execute()
                 .actionGet();
 
-        assertEquals(5, response.tokens().size());
-        printTokens(response.tokens());
+        assertEquals(5, response.getTokens().size());
+        printTokens(response.getTokens());
 
         // Analyze another string
         response = adminClient.indices()
@@ -51,8 +51,8 @@ public class AnalyzeTest {
                 .execute()
                 .actionGet();
 
-        assertEquals(17, response.tokens().size());
-        printTokens(response.tokens());
+        assertEquals(17, response.getTokens().size());
+        printTokens(response.getTokens());
     }
 
     /**
@@ -65,8 +65,8 @@ public class AnalyzeTest {
             LOGGER.info(String.format("Printing %d tokens:\r\n", tokens.size()));
             for (AnalyzeToken token : tokens) {
                 LOGGER.info(String.format("\tToken %d term=[%s], type=[%s], startOffset=[%d], endOffset=[%d]\r\n",
-                        token.position(), token.term(), token.type(),
-                        token.startOffset(), token.endOffset()));
+                        token.getPosition(), token.getTerm(), token.getType(),
+                        token.getStartOffset(), token.getEndOffset()));
             }
         }
     }
