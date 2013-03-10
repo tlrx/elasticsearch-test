@@ -66,7 +66,7 @@ public class ElasticsearchBulkRequestAnnotationHandler extends AbstractAnnotatio
 
             LOGGER.info(String.format("Bulk request for data file '%s' executed in %d ms with %sfailures",
                     elasticsearchBulkRequest.dataFile(),
-                    response.tookInMillis(),
+                    response.getTookInMillis(),
                     response.hasFailures() ? "" : "no "));
         } finally {
             try {

@@ -41,7 +41,7 @@ public class Count implements Request<Long> {
     @Override
     public Long execute(Client client) throws ElasticSearchException {
         CountResponse response = client.prepareCount(indices).execute().actionGet();
-        return response.count();
+        return response.getCount();
     }
 
     @Override

@@ -91,7 +91,7 @@ public class DeleteTemplates implements Request<Void> {
                 DeleteIndexTemplateRequest request = new DeleteIndexTemplateRequest(template);
                 DeleteIndexTemplateResponse response = client.admin().indices()
                         .execute(DeleteIndexTemplateAction.INSTANCE, request).get();
-                if (!response.acknowledged()) {
+                if (!response.isAcknowledged()) {
                     if (failFast) {
                         throw new EsSetupRuntimeException("Exception when deleting index template: " + template);
                     } else {

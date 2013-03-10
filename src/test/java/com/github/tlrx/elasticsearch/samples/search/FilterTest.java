@@ -48,7 +48,7 @@ public class FilterTest {
 
         // Verify if bulk import succeed
         SearchResponse response = client.prepareSearch(INDEX).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
-        assertEquals(7L, response.hits().totalHits());
+        assertEquals(7L, response.getHits().totalHits());
 
         // Search for match_all and filter "tags:french"
         response = client.prepareSearch(INDEX)
@@ -56,7 +56,7 @@ public class FilterTest {
                 .setFilter(FilterBuilders.termFilter("tags", "french"))
                 .execute()
                 .actionGet();
-        assertEquals(7L, response.hits().totalHits());
+        assertEquals(7L, response.getHits().totalHits());
 
         // Search for match_all and filter "tags:poetry"
         response = client.prepareSearch(INDEX)
@@ -64,7 +64,7 @@ public class FilterTest {
                 .setFilter(FilterBuilders.termFilter("tags", "poetry"))
                 .execute()
                 .actionGet();
-        assertEquals(3L, response.hits().totalHits());
+        assertEquals(3L, response.getHits().totalHits());
 
         // Search for match_all and filter "tags:literature" and "year:1829"
         response = client.prepareSearch(INDEX)
@@ -74,7 +74,7 @@ public class FilterTest {
                         FilterBuilders.termFilter("year", "1829")))
                 .execute()
                 .actionGet();
-        assertEquals(2L, response.hits().totalHits());
+        assertEquals(2L, response.getHits().totalHits());
 
     }
 }

@@ -96,7 +96,7 @@ public class CreateTemplate implements Request<Void> {
         try {
             PutIndexTemplateResponse response = client.admin().indices().execute(PutIndexTemplateAction.INSTANCE, request).get();
 
-            if (!response.acknowledged()) {
+            if (!response.isAcknowledged()) {
                 throw new EsSetupRuntimeException("Exception when putting index template");
             }
         } catch (Exception e) {

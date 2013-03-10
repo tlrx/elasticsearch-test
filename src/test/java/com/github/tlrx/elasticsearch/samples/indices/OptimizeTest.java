@@ -67,7 +67,7 @@ public class OptimizeTest {
         }
 
         BulkResponse bulkResponse = bulkRequestBuilder.setRefresh(true).execute().actionGet();
-        LOGGER.info(String.format("Bulk request executed in %d ms, %d document(s) indexed, failures : %s.\r\n", bulkResponse.tookInMillis(), NB, bulkResponse.hasFailures()));
+        LOGGER.info(String.format("Bulk request executed in %d ms, %d document(s) indexed, failures : %s.\r\n", bulkResponse.getTookInMillis(), NB, bulkResponse.hasFailures()));
 
         // Deletes some documents
         for (int i = 0; i < NB; i = i + 9) {
@@ -77,7 +77,7 @@ public class OptimizeTest {
                     .execute()
                     .actionGet();
 
-            if (deleteResponse.notFound()) {
+            if (deleteResponse.isNotFound()) {
                 LOGGER.info(String.format("Unable to delete document [id:%d], not found.\r\n", i));
             } else {
                 deleted++;
@@ -92,11 +92,11 @@ public class OptimizeTest {
 
         // Count documents number
         CountResponse countResponse = client.prepareCount(INDEX).setTypes(TYPE).execute().actionGet();
-        assertEquals((NB - deleted), countResponse.count());
+        assertEquals((NB - deleted), countResponse.getCount());
 
         // Retrieves document status for the index
         IndicesStatusResponse status = admin.indices().prepareStatus(INDEX).execute().actionGet();
-        DocsStatus docsStatus = status.index(INDEX).docs();
+        DocsStatus docsStatus = status.getIndex(INDEX).getDocs();
 
         // Check docs status
         LOGGER.info(String.format("DocsStatus before optimize: %d numDocs, %d maxDocs, %d deletedDocs\r\n", docsStatus.getNumDocs(), docsStatus.getMaxDoc(), docsStatus.getDeletedDocs()));
@@ -113,7 +113,7 @@ public class OptimizeTest {
                 .actionGet();
 
         // Retrieves document status gain
-        docsStatus = admin.indices().prepareStatus(INDEX).execute().actionGet().index(INDEX).docs();
+        docsStatus = admin.indices().prepareStatus(INDEX).execute().actionGet().getIndex(INDEX).getDocs();
 
         // Check again docs status
         LOGGER.info(String.format("DocsStatus after optimize: %d numDocs, %d maxDocs, %d deletedDocs\r\n", docsStatus.getNumDocs(), docsStatus.getMaxDoc(), docsStatus.getDeletedDocs()));

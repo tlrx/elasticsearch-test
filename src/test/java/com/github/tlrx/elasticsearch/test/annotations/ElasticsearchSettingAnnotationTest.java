@@ -44,7 +44,7 @@ public class ElasticsearchSettingAnnotationTest {
                 .execute()
                 .actionGet();
 
-        Settings nodeSettings = infoResponse.getAt(0).settings();
+        Settings nodeSettings = infoResponse.getAt(0).getSettings();
         assertEquals("false", nodeSettings.get("http.enabled"));
         assertEquals("zone_one", nodeSettings.get("node.zone"));
 
@@ -52,12 +52,12 @@ public class ElasticsearchSettingAnnotationTest {
         ClusterStateResponse response = adminClient.cluster().prepareState()
                 .execute().actionGet();
 
-        Settings indexSettings = response.state().metaData().index("library").settings();
+        Settings indexSettings = response.getState().metaData().index("library").settings();
         assertEquals("2", indexSettings.get("index.number_of_shards"));
         assertEquals("1", indexSettings.get("index.number_of_replicas"));
 
         // Check default settings
-        indexSettings = response.state().metaData().index("people").settings();
+        indexSettings = response.getState().metaData().index("people").settings();
         assertEquals("1", indexSettings.get("index.number_of_shards"));
         assertEquals("0", indexSettings.get("index.number_of_replicas"));
     }
