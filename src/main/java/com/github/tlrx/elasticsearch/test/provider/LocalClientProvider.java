@@ -86,7 +86,7 @@ public class LocalClientProvider implements ClientProvider {
     protected Settings buildNodeSettings() {
         // Build settings
         ImmutableSettings.Builder builder = ImmutableSettings.settingsBuilder()
-                .put("node.name", "node-test")
+                .put("node.name", "node-test-" + System.currentTimeMillis())
                 .put("node.data", true)
                 .put("cluster.name", "cluster-test-" + NetworkUtils.getLocalAddress().getHostName())
                 .put("index.store.type", "memory")

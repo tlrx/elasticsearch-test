@@ -77,7 +77,10 @@ public class EsSetupTest {
     }
 
     @Test
-    public void testIndices() {
+    public void testRequests() {
+
+        // Test access to Client
+        assertNotNull(esSetup.client());
 
         // test exists()
         assertTrue(esSetup.exists("catalog-2009"));
@@ -102,7 +105,6 @@ public class EsSetupTest {
         esSetup.execute(delete("catalog-2013", "product", "6"));
         assertEquals(new Long(5), esSetup.countAll());
 
-
         // test count(index)
         assertEquals(esSetup.countAll(), esSetup.count("catalog-2013"));
 
@@ -123,6 +125,7 @@ public class EsSetupTest {
         esSetup.execute(deleteAll());
         assertFalse(esSetup.exists("catalog-2012"));
         assertFalse(esSetup.exists("catalog-2013"));
+
     }
 
     @After
