@@ -31,7 +31,7 @@ public class ElasticsearchIndexesAnnotationTest {
                 .prepareExists("people")
                 .execute().actionGet();
 
-        assertTrue("Index must exist", existResponse.exists());
+        assertTrue("Index must exist", existResponse.isExists());
     }
 
     @Test
@@ -44,13 +44,13 @@ public class ElasticsearchIndexesAnnotationTest {
                 .prepareExists("people1")
                 .execute().actionGet();
 
-        assertTrue("Index people1 must exist", existResponse.exists());
+        assertTrue("Index people1 must exist", existResponse.isExists());
 
         // Checks if the index people2 has been found
         existResponse = adminClient.indices()
                 .prepareExists("people2")
                 .execute().actionGet();
 
-        assertTrue("Index people2 must exist", existResponse.exists());
+        assertTrue("Index people2 must exist", existResponse.isExists());
     }
 }

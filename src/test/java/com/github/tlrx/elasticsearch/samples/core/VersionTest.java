@@ -49,7 +49,7 @@ public class VersionTest {
                 .execute()
                 .actionGet();
 
-        assertEquals("First document version must be 1", 1, response.version());
+        assertEquals("First document version must be 1", 1, response.getVersion());
 
         // Modify book #1
         builder = JsonXContent.contentBuilder().startObject()
@@ -64,7 +64,7 @@ public class VersionTest {
                 .execute()
                 .actionGet();
 
-        assertEquals("Updated version must be 2", 2, response.version());
+        assertEquals("Updated version must be 2", 2, response.getVersion());
 
         // Try to update book #1 with a wrong version number
         try {
@@ -85,7 +85,7 @@ public class VersionTest {
                 .setVersion(2)
                 .execute().actionGet();
 
-        assertEquals("Updated version must be 3", 3, response.version());
+        assertEquals("Updated version must be 3", 3, response.getVersion());
 
         // Try to update book #1 with a wrong version number
         try {
@@ -137,7 +137,7 @@ public class VersionTest {
                 .execute()
                 .actionGet();
 
-        assertEquals("Document version must be incremented", startVersion, response.version());
+        assertEquals("Document version must be incremented", startVersion, response.getVersion());
 
         // Modify book #2
         builder = JsonXContent.contentBuilder().startObject()
@@ -151,7 +151,7 @@ public class VersionTest {
                 .execute()
                 .actionGet();
 
-        assertEquals("Document updated must have an incremented version number", startVersion + 1, response.version());
+        assertEquals("Document updated must have an incremented version number", startVersion + 1, response.getVersion());
 
         // Try to index book #2 with lower version number
         try {
@@ -190,7 +190,7 @@ public class VersionTest {
                 .setVersionType(VersionType.EXTERNAL)
                 .execute()
                 .actionGet();
-        assertEquals("Updated version must be " + startVersion + 10, startVersion + 10, response.version());
+        assertEquals("Updated version must be " + startVersion + 10, startVersion + 10, response.getVersion());
 
         // Try to index book #2 with lower version number and no version_type = external
         try {
@@ -214,7 +214,7 @@ public class VersionTest {
                 .execute()
                 .actionGet();
 
-        assertEquals("Document updated must have an incremented version number", startVersion + 11, response.version());
+        assertEquals("Document updated must have an incremented version number", startVersion + 11, response.getVersion());
 
         // Try to index book #2 with greater version number and no version_type = external
         try {

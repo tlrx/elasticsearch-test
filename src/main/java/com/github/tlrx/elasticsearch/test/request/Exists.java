@@ -48,13 +48,13 @@ public class Exists implements Request<Boolean> {
 
             // Check if a document exists
             GetResponse response = client.prepareGet(index, type, id).setRefresh(true).execute().actionGet();
-            return response.exists();
+            return response.isExists();
 
         } else {
 
             // Check if index exists
             IndicesExistsResponse response = client.admin().indices().prepareExists(index).execute().actionGet();
-            return response.exists();
+            return response.isExists();
         }
     }
 

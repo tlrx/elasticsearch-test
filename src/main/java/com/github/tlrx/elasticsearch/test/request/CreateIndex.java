@@ -109,7 +109,7 @@ public class CreateIndex implements Request<Void> {
             }
 
             CreateIndexResponse response = client.admin().indices().create(request).get();
-            if ((response.acknowledged()) && (bulkRequestBuilder != null)) {
+            if ((response.isAcknowledged()) && (bulkRequestBuilder != null)) {
                 BulkResponse bulkResponse = bulkRequestBuilder.setRefresh(true).execute().actionGet();
                 if (bulkResponse.hasFailures()) {
                     throw new EsSetupRuntimeException("Bulk request has failures: "+bulkResponse.buildFailureMessage());
