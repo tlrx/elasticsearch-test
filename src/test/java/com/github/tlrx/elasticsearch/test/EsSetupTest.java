@@ -11,7 +11,10 @@ import org.junit.Test;
 import static com.github.tlrx.elasticsearch.test.EsSetup.*;
 import static org.junit.Assert.*;
 
-public class BasicTest {
+/**
+ * Test class for {@link EsSetup}
+ */
+public class EsSetupTest {
 
     EsSetup esSetup;
 
