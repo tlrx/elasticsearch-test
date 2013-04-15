@@ -42,11 +42,15 @@ public class ElasticsearchMappingAnnotationTest {
                             compress = false,
                             ttl = true,
                             ttlValue = "2d",
+                            timestamp = true,
+                            timestampFormat = "YYYY-MM-dd",
+                            timestampPath = "publication_date",
                             properties = {
                                     @ElasticsearchMappingField(name = "title", store = Store.Yes, type = Types.String),
                                     @ElasticsearchMappingField(name = "author", store = Store.No, type = Types.String, index = Index.Not_Analyzed),
                                     @ElasticsearchMappingField(name = "description", store = Store.Yes, type = Types.String, index = Index.Analyzed, analyzerName = "standard"),
-                                    @ElasticsearchMappingField(name = "role", store = Store.No, type = Types.String, index = Index.Analyzed, indexAnalyzerName = "keyword", searchAnalyzerName = "standard")
+                                    @ElasticsearchMappingField(name = "role", store = Store.No, type = Types.String, index = Index.Analyzed, indexAnalyzerName = "keyword", searchAnalyzerName = "standard"),
+                                    @ElasticsearchMappingField(name = "publication_date", store = Store.No, type = Types.Date, index = Index.Not_Analyzed)
                             },
                             propertiesMulti = {
                                     @ElasticsearchMappingMultiField(name = "name",
@@ -89,6 +93,13 @@ public class ElasticsearchMappingAnnotationTest {
             assertNotNull("_ttl must exists", ttl);
             assertEquals(Boolean.TRUE, ttl.get("enabled"));
             assertEquals(172800000, ttl.get("default"));
+
+            // Check _timestamp
+            Map<String, Object> timestamp = (Map<String, Object>) def.get("_timestamp");
+            assertNotNull("_timestamp must exist", timestamp);
+            assertEquals(Boolean.TRUE, timestamp.get("enabled"));
+            assertEquals("YYYY-MM-dd", timestamp.get("format"));
+            assertEquals("publication_date", timestamp.get("path"));
 
             // Check properties
             Map<String, Object> properties = (Map<String, Object>) def.get("properties");

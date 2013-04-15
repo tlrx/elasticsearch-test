@@ -48,4 +48,21 @@ public @interface ElasticsearchMapping {
      * Time To Live value
      */
     String ttlValue() default "";
+
+    /**
+     * Index the document's timestamp using the _timestamp field (default to false)
+     */
+    boolean timestamp() default false;
+
+    /**
+     * The path used to extract the timestamp from the document
+     * (default to "", meaning the "_timestamp" field should be explicitly set when indexing)
+     */
+    String timestampPath() default "";
+
+    /**
+     * The date format of the "_timestamp" field (default to "dateOptionalTime")
+     */
+    String timestampFormat() default "dateOptionalTime";
+
 }

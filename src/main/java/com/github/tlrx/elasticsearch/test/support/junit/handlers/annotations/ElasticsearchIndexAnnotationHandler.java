@@ -277,6 +277,18 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
                 builder = builder.endObject();
             }
 
+            if (mapping.timestamp()) {
+                builder = builder.startObject("_timestamp").field("enabled",
+                        String.valueOf(mapping.timestamp()));
+                if (mapping.timestampPath().length() > 0) {
+                    builder = builder.field("path", mapping.timestampPath());
+                }
+                if (mapping.timestampFormat().length() > 0) {
+                    builder = builder.field("format", mapping.timestampFormat());
+                }
+                builder = builder.endObject();
+            }
+
             builder = builder.startObject("properties");
 
             // Manage fields
