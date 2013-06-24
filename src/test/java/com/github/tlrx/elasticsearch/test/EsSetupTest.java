@@ -127,6 +127,21 @@ public class EsSetupTest {
         assertFalse(esSetup.exists("catalog-2013"));
 
     }
+    
+    @Test
+    public void testSecondRequests() {
+
+        // Test second test access to Client
+        assertNotNull(esSetup.client());
+
+        // test second access to exists()
+        assertTrue(esSetup.exists("catalog-2009"));
+        assertTrue(esSetup.exists("catalog-2010"));
+        assertTrue(esSetup.exists("catalog-2011"));
+        assertTrue(esSetup.exists("catalog-2012"));
+        assertTrue(esSetup.exists("catalog-2013"));
+        
+    }
 
     @After
     public void tearDown() throws Exception {
