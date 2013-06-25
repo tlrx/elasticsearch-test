@@ -3,7 +3,7 @@
 
     <groupId>com.github.tlrx</groupId>
     <artifactId>elasticsearch-test</artifactId>
-    <version>0.0.9-SNAPSHOT</version>
+    <version>0.0.9</version>
     <packaging>jar</packaging>
     <name>elasticsearch-test</name>
     <description>elasticsearch-test, a framework that makes ElasticSearch unit testing a breeze</description>
@@ -99,24 +99,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-scm-plugin</artifactId>
                 <version>1.5</version>
-            </plugin>
-            <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>downloads-maven-plugin</artifactId>
-                <version>0.5</version>
-                <configuration>
-                    <description>${project.version} release of ${project.name}</description>
-                    <override>true</override>
-                    <includeAttached>true</includeAttached>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>upload</goal>
-                        </goals>
-                        <phase>deploy</phase>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
