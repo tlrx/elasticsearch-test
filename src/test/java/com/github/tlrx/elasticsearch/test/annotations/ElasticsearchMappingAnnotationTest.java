@@ -58,7 +58,16 @@ public class ElasticsearchMappingAnnotationTest {
                                                     @ElasticsearchMappingField(name = "name", type = Types.String, index = Index.Analyzed, termVector = TermVector.With_Offsets),
                                                     @ElasticsearchMappingField(name = "untouched", type = Types.String, index = Index.Not_Analyzed, termVector = TermVector.With_Positions_Offsets)
                                             })
-                            })
+                            }),
+                    @ElasticsearchMapping(typeName = "rating",
+                            source = true,
+                            compress = true,
+                            compressThreshold = "10kb",
+                            parent = "book",
+                            properties = {
+                                    @ElasticsearchMappingField(name = "stars", index = Index.Not_Analyzed, type = Types.Integer)
+                            }
+                    )
             })
     public void testElasticsearchMapping() {
 
@@ -76,6 +85,8 @@ public class ElasticsearchMappingAnnotationTest {
                 .actionGet();
 
         IndexMetaData indexMetaData = stateResponse.getState().getMetaData().index("library");
+
+        // Test book mapping
         MappingMetaData mappingMetaData = indexMetaData.getMappings().get("book");
         assertNotNull("Mapping must exists", mappingMetaData);
 
@@ -146,6 +157,36 @@ public class ElasticsearchMappingAnnotationTest {
             // Check name.name
             Map<String, Object> nameName = (Map<String, Object>) fields.get("name");
             assertEquals("string", nameName.get("type"));
+
+        } catch (IOException e) {
+            fail("Exception when reading mapping metadata");
+        }
+
+        // Test rating mapping
+        mappingMetaData = indexMetaData.getMappings().get("rating");
+        assertNotNull("Mapping must exists", mappingMetaData);
+
+        try {
+            Map<String, Object> def = mappingMetaData.sourceAsMap();
+
+            // Check _source
+            Map<String, Object> source = (Map<String, Object>) def.get("_source");
+            assertNotNull("_source must exists", source);
+            assertEquals(Boolean.TRUE, source.get("compress"));
+            assertEquals("10kb", source.get("compress_threshold"));
+
+            // Check _parent
+            Map<String, Object> parent = (Map<String, Object>) def.get("_parent");
+            assertNotNull("_parent must exists", parent);
+            assertEquals("book", parent.get("type"));
+
+            // Check properties
+            Map<String, Object> properties = (Map<String, Object>) def.get("properties");
+            assertNotNull("properties must exists", properties);
+
+            // Check stars
+            Map<String, Object> stars = (Map<String, Object>) properties.get("stars");
+            assertEquals("integer", stars.get("type"));
 
         } catch (IOException e) {
             fail("Exception when reading mapping metadata");

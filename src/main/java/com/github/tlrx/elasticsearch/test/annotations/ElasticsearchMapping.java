@@ -35,9 +35,14 @@ public @interface ElasticsearchMapping {
     boolean source() default true;
 
     /**
-     * The source's "compress" value (default to false)
+     * The source's "compress" value (default to true (since v0.90))
      */
-    boolean compress() default false;
+    boolean compress() default true;
+
+    /**
+     * Compress threshold value
+     */
+    String compressThreshold() default "";
 
     /**
      * Time To Live "enabled" value (default to false)
@@ -64,5 +69,10 @@ public @interface ElasticsearchMapping {
      * The date format of the "_timestamp" field (default to "dateOptionalTime")
      */
     String timestampFormat() default "dateOptionalTime";
+
+    /**
+     * The _parent's type
+     */
+    String parent() default "";
 
 }

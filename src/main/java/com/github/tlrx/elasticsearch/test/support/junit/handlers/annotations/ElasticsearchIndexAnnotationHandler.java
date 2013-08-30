@@ -264,9 +264,24 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
                     .startObject()
                     .startObject(mapping.typeName())
                     .startObject("_source")
-                    .field("enabled", String.valueOf(mapping.source()))
-                    .field("compress", String.valueOf(mapping.compress()))
-                    .endObject();
+                        .field("enabled", String.valueOf(mapping.source()));
+
+            if (!mapping.compress()) {
+                builder.field("compress", String.valueOf(mapping.compress()));
+            } else {
+                builder.field("compress", String.valueOf(mapping.compress()));
+
+                if (!"".equals(mapping.compressThreshold())) {
+                    builder.field("compress_threshold", mapping.compressThreshold());
+                }
+            }
+            builder.endObject();
+
+            if (!"".equals(mapping.parent())) {
+                builder = builder.startObject("_parent")
+                        .field("type", mapping.parent())
+                        .endObject();
+            }
 
             if (mapping.ttl()) {
                 builder = builder.startObject("_ttl").field("enabled",
