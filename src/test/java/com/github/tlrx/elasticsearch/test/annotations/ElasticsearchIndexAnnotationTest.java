@@ -10,8 +10,10 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.node.Node;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
 import java.io.IOException;
 
@@ -23,6 +25,7 @@ import static org.junit.Assert.*;
  * @author tlrx
  */
 @RunWith(ElasticsearchRunner.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ElasticsearchIndexAnnotationTest {
 
     @ElasticsearchNode(local = false)
@@ -47,7 +50,7 @@ public class ElasticsearchIndexAnnotationTest {
 
     @Test
     @ElasticsearchIndex(indexName = "people")
-    public void testElasticsearchIndexWithName() throws ElasticSearchException, IOException {
+    public void testElasticsearchIndex2() throws ElasticSearchException, IOException {
         // Checks if the index has been created
         IndicesExistsResponse existResponse = adminClient.indices()
                 .prepareExists("people")
@@ -61,11 +64,14 @@ public class ElasticsearchIndexAnnotationTest {
                 .setRefresh(true)
                 .execute()
                 .actionGet();
-    }
+
+		// Check if document is indexed
+		assertTrue("Document #1 must be found", client.prepareGet("people", "person", "1").execute().actionGet().isExists());
+	}
 
     @Test
     @ElasticsearchIndex(indexName = "people", cleanAfter = true)
-    public void testElasticsearchCleanAfter1() {
+    public void testElasticsearchIndexCleanAfter1() {
         // Checks if the index has been found
         IndicesExistsResponse existResponse = adminClient.indices()
                 .prepareExists("people")
@@ -79,7 +85,7 @@ public class ElasticsearchIndexAnnotationTest {
 
     @Test
     @ElasticsearchIndex(indexName = "people")
-    public void testElasticsearchCleanAfter2() throws ElasticSearchException, IOException {
+    public void testElasticsearchIndexCleanAfter2() throws ElasticSearchException, IOException {
         // Checks if the index has been found
         IndicesExistsResponse existResponse = adminClient.indices()
                 .prepareExists("people")
@@ -100,7 +106,7 @@ public class ElasticsearchIndexAnnotationTest {
 
     @Test
     @ElasticsearchIndex(indexName = "people")
-    public void testElasticsearchCleanAfter3() {
+    public void testElasticsearchIndexCleanAfter3() {
         // Checks if the index has been found
         IndicesExistsResponse existResponse = adminClient.indices()
                 .prepareExists("people")
@@ -115,7 +121,7 @@ public class ElasticsearchIndexAnnotationTest {
 
     @Test
     @ElasticsearchIndex(indexName = "people", forceCreate = true)
-    public void testElasticsearchForceCreate() {
+    public void testElasticsearchIndexForceCreate() {
         // Checks if the index has been found
         IndicesExistsResponse existResponse = adminClient.indices()
                 .prepareExists("people")
@@ -132,7 +138,7 @@ public class ElasticsearchIndexAnnotationTest {
 
     @Test
     @ElasticsearchIndex(indexName = "documents", settingsFile = "com/github/tlrx/elasticsearch/test/annotations/documents/settings.json")
-    public void testElasticsearchSettingsFile() {
+    public void testElasticsearchIndexSettingsFile() {
         // Check custom settings on index
         ClusterStateResponse response = adminClient.cluster().prepareState()
                 .execute().actionGet();
