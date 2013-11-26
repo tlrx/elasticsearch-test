@@ -1,5 +1,8 @@
 elasticsearch-test, a framework that makes "ElasticSearch":http://www.elasticsearch.org/ unit testing a breeze.
 
+*Warning*: Since 0.90.7, the Elasticsearch team provides a JAR file containing all the test classes. This JAR can be included in third party projects. See the "pull request":https://github.com/elasticsearch/elasticsearch/pull/4126 for more information.
+
+
 Here you will find:
 * a <b>simple Java API</b> that can be used to easily set up ElasticSearch in your unit tests
 * some <b>Java annotations</b> that simplifies JUnit testing with ElasticSearch
