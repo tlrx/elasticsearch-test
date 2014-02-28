@@ -77,7 +77,7 @@ public class OptimizeTest {
                     .execute()
                     .actionGet();
 
-            if (deleteResponse.isNotFound()) {
+            if (!deleteResponse.isFound()) {
                 LOGGER.info(String.format("Unable to delete document [id:%d], not found.\r\n", i));
             } else {
                 deleted++;

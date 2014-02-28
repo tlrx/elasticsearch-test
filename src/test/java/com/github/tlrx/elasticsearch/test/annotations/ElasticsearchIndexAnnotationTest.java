@@ -1,7 +1,7 @@
 package com.github.tlrx.elasticsearch.test.annotations;
 
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
-import org.elasticsearch.ElasticSearchException;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.client.AdminClient;
@@ -50,7 +50,7 @@ public class ElasticsearchIndexAnnotationTest {
 
     @Test
     @ElasticsearchIndex(indexName = "people")
-    public void testElasticsearchIndex2() throws ElasticSearchException, IOException {
+    public void testElasticsearchIndex2() throws ElasticsearchException, IOException {
         // Checks if the index has been created
         IndicesExistsResponse existResponse = adminClient.indices()
                 .prepareExists("people")
@@ -85,7 +85,7 @@ public class ElasticsearchIndexAnnotationTest {
 
     @Test
     @ElasticsearchIndex(indexName = "people")
-    public void testElasticsearchIndexCleanAfter2() throws ElasticSearchException, IOException {
+    public void testElasticsearchIndexCleanAfter2() throws ElasticsearchException, IOException {
         // Checks if the index has been found
         IndicesExistsResponse existResponse = adminClient.indices()
                 .prepareExists("people")

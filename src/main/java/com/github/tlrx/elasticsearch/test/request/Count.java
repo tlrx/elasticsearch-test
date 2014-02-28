@@ -18,7 +18,7 @@
  */
 package com.github.tlrx.elasticsearch.test.request;
 
-import org.elasticsearch.ElasticSearchException;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.client.Client;
 
@@ -39,7 +39,7 @@ public class Count implements Request<Long> {
     }
 
     @Override
-    public Long execute(Client client) throws ElasticSearchException {
+    public Long execute(Client client) throws ElasticsearchException {
         CountResponse response = client.prepareCount(indices).execute().actionGet();
         return response.getCount();
     }

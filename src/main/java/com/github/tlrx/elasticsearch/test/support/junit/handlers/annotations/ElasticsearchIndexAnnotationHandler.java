@@ -5,7 +5,7 @@ package com.github.tlrx.elasticsearch.test.support.junit.handlers.annotations;
 
 import com.github.tlrx.elasticsearch.test.annotations.*;
 import com.github.tlrx.elasticsearch.test.support.junit.handlers.MethodLevelElasticsearchAnnotationHandler;
-import org.elasticsearch.ElasticSearchException;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
@@ -57,9 +57,9 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
      * @param nodeName
      * @param indexName
      * @throws Exception
-     * @throws ElasticSearchException
+     * @throws ElasticsearchException
      */
-    private void clean(Map<String, Object> context, String nodeName, String indexName) throws ElasticSearchException, Exception {
+    private void clean(Map<String, Object> context, String nodeName, String indexName) throws ElasticsearchException, Exception {
         client(context, nodeName).prepareDeleteByQuery(indexName)
                 .setQuery(QueryBuilders.matchAllQuery())
                 .execute().actionGet();
@@ -71,10 +71,10 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
      * @param context
      * @param nodeName
      * @param indexName
-     * @throws ElasticSearchException
+     * @throws ElasticsearchException
      * @throws Exception
      */
-    private void deleteIndex(Map<String, Object> context, String nodeName, String indexName) throws ElasticSearchException, Exception {
+    private void deleteIndex(Map<String, Object> context, String nodeName, String indexName) throws ElasticsearchException, Exception {
         DeleteIndexResponse response = admin(context, nodeName).indices().prepareDelete(indexName).execute().actionGet();
         if (!response.isAcknowledged()) {
             throw new Exception("Could not delete index [" + indexName + "]");
@@ -88,10 +88,10 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
      * @param nodeName
      * @param indexName
      * @param settings
-     * @throws ElasticSearchException
+     * @throws ElasticsearchException
      * @throws Exception
      */
-    private void createIndex(Map<String, Object> context, String nodeName, String indexName, Settings settings) throws ElasticSearchException, Exception {
+    private void createIndex(Map<String, Object> context, String nodeName, String indexName, Settings settings) throws ElasticsearchException, Exception {
         CreateIndexRequestBuilder builder = admin(context, nodeName).indices().prepareCreate(indexName);
         if (settings != null) {
             builder.setSettings(settings);
@@ -111,10 +111,10 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
      * @param indexName
      * @param type
      * @param mappingBuilder
-     * @throws ElasticSearchException
+     * @throws ElasticsearchException
      * @throws Exception
      */
-    private void putIndexMapping(Map<String, Object> context, String nodeName, String indexName, String type, XContentBuilder mappingBuilder) throws ElasticSearchException, Exception {
+    private void putIndexMapping(Map<String, Object> context, String nodeName, String indexName, String type, XContentBuilder mappingBuilder) throws ElasticsearchException, Exception {
         PutMappingResponse response = admin(context, nodeName).indices()
                 .preparePutMapping(indexName)
                 .setType(type)
@@ -245,6 +245,53 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
             builder.field("term_vector", field.termVector().toString().toLowerCase());
         }
 
+        if ((field.fields().length != 0)) {
+            ElasticsearchMappingField.ElasticsearchMappingSubField[] fields = field.fields();
+            if ((fields != null) && (fields.length > 0)) {
+                builder = builder.startObject("fields");
+
+                for (ElasticsearchMappingField.ElasticsearchMappingSubField subField : fields) {
+                    builder = buildField(subField, builder);
+                }
+                builder = builder.endObject();
+            }
+            builder = builder.endObject();
+        }
+
+        builder = builder.endObject();
+        return builder;
+    }
+
+
+    private XContentBuilder buildField(ElasticsearchMappingField.ElasticsearchMappingSubField field, XContentBuilder builder) throws IOException {
+        builder = builder.startObject(field.name())
+                .field("type", field.type().toString().toLowerCase())
+                .field("store", field.store().toString().toLowerCase());
+
+        if (!field.index().equals(ElasticsearchMappingField.Index.Undefined)) {
+            builder.field("index", field.index().toString().toLowerCase());
+        }
+
+        if ((field.analyzerName() != null)
+                && (!ElasticsearchMappingField.DEFAULT_ANALYZER.equals(field.analyzerName()))) {
+            builder.field("analyzer", field.analyzerName().toString().toLowerCase());
+        }
+
+        if ((field.indexAnalyzerName() != null)
+                && (!ElasticsearchMappingField.DEFAULT_ANALYZER.equals(field.indexAnalyzerName()))) {
+            builder.field("index_analyzer", field.indexAnalyzerName().toString().toLowerCase());
+        }
+
+        if ((field.searchAnalyzerName() != null)
+                && (!ElasticsearchMappingField.DEFAULT_ANALYZER.equals(field.searchAnalyzerName()))) {
+            builder.field("search_analyzer", field.searchAnalyzerName().toString().toLowerCase());
+        }
+
+        if ((field.termVector() != null)
+                && (!ElasticsearchMappingField.TermVector.No.equals(field.termVector()))) {
+            builder.field("term_vector", field.termVector().toString().toLowerCase());
+        }
+
         builder = builder.endObject();
         return builder;
     }
@@ -256,7 +303,7 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
      * @param mapping
      * @throws IOException
      */
-    private XContentBuilder buildMapping(ElasticsearchMapping mapping) {
+    private XContentBuilder buildMapping(ElasticsearchMapping mapping) throws IOException {
         XContentBuilder builder = null;
 
         try {
@@ -312,26 +359,6 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
             if ((properties != null) && (properties.length > 0)) {
                 for (ElasticsearchMappingField field : properties) {
                     builder = buildField(field, builder);
-                }
-            }
-
-            // Manage multi_fields
-            ElasticsearchMappingMultiField[] propertiesMulti = mapping.propertiesMulti();
-
-            if ((propertiesMulti != null) && (propertiesMulti.length > 0)) {
-                for (ElasticsearchMappingMultiField multiField : propertiesMulti) {
-                    builder = builder.startObject(multiField.name());
-
-                    ElasticsearchMappingField[] fields = multiField.fields();
-                    if ((fields != null) && (fields.length > 0)) {
-                        builder = builder.startObject("fields");
-
-                        for (ElasticsearchMappingField field : fields) {
-                            builder = buildField(field, builder);
-                        }
-                        builder = builder.endObject();
-                    }
-                    builder = builder.endObject();
                 }
             }
 

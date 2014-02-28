@@ -50,13 +50,11 @@ public class ElasticsearchMappingAnnotationTest {
                                     @ElasticsearchMappingField(name = "author", store = Store.No, type = Types.String, index = Index.Not_Analyzed),
                                     @ElasticsearchMappingField(name = "description", store = Store.Yes, type = Types.String, index = Index.Analyzed, analyzerName = "standard"),
                                     @ElasticsearchMappingField(name = "role", store = Store.No, type = Types.String, index = Index.Analyzed, indexAnalyzerName = "keyword", searchAnalyzerName = "standard"),
-                                    @ElasticsearchMappingField(name = "publication_date", store = Store.No, type = Types.Date, index = Index.Not_Analyzed)
-                            },
-                            propertiesMulti = {
-                                    @ElasticsearchMappingMultiField(name = "name",
+                                    @ElasticsearchMappingField(name = "publication_date", store = Store.No, type = Types.Date, index = Index.Not_Analyzed),
+                                    @ElasticsearchMappingField(name = "name", type = Types.String,
                                             fields = {
-                                                    @ElasticsearchMappingField(name = "name", type = Types.String, index = Index.Analyzed, termVector = TermVector.With_Offsets),
-                                                    @ElasticsearchMappingField(name = "untouched", type = Types.String, index = Index.Not_Analyzed, termVector = TermVector.With_Positions_Offsets)
+                                                    @ElasticsearchMappingField.ElasticsearchMappingSubField(name = "name", type = Types.String, index = Index.Analyzed, termVector = TermVector.With_Offsets),
+                                                    @ElasticsearchMappingField.ElasticsearchMappingSubField(name = "untouched", type = Types.String, index = Index.Not_Analyzed, termVector = TermVector.With_Positions_Offsets)
                                             })
                             }),
                     @ElasticsearchMapping(typeName = "rating",
@@ -81,7 +79,7 @@ public class ElasticsearchMappingAnnotationTest {
         // Checks if mapping has been created
         ClusterStateResponse stateResponse = adminClient.cluster()
                 .prepareState()
-                .setFilterIndices("library").execute()
+                .setIndices("library").execute()
                 .actionGet();
 
         IndexMetaData indexMetaData = stateResponse.getState().getMetaData().index("library");
@@ -144,7 +142,7 @@ public class ElasticsearchMappingAnnotationTest {
 
             // Check name
             Map<String, Object> name = (Map<String, Object>) properties.get("name");
-            assertEquals("multi_field", name.get("type"));
+            assertEquals("string", name.get("type"));
             Map<String, Object> fields = (Map<String, Object>) name.get("fields");
             assertNotNull("fields must exists", fields);
 

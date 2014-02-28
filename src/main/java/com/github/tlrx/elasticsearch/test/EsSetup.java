@@ -278,7 +278,7 @@ public class EsSetup {
      * @return a {@link DeleteIndices} request
      */
     public static DeleteIndices deleteAll() {
-        return new DeleteIndices();
+        return new DeleteIndices("_all");
     }
 
     /**
