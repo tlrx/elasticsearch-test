@@ -29,7 +29,10 @@ import org.elasticsearch.action.admin.indices.template.delete.DeleteIndexTemplat
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.collect.Lists;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -65,15 +68,14 @@ public class DeleteTemplates implements Request<Void> {
     /**
      * Get the names of templates to delete, if no template is provided the complete list of templates is retrieved
      */
-    private Iterable<String> getTemplates(Client client) {
-        Iterable<String> templatesColl;
+    private Collection<String> getTemplates(Client client) {
+        Collection<String> templatesColl;
         if (this.templates==null || this.templates.length==0) {
             // Retrieve all templates
             ClusterStateRequestBuilder clusterStateRequestBuilder =
                     ClusterStateAction.INSTANCE.newRequestBuilder(client.admin().cluster())
                             .all().setMetaData(false);
             ClusterStateResponse clusterStateResponse = clusterStateRequestBuilder.execute().actionGet();
-            // Fixme quick fix to get code working
             templatesColl = Lists.newArrayList(clusterStateResponse.getState().getMetaData().getTemplates().keysIt());
         } else {
             // Use provided templates
