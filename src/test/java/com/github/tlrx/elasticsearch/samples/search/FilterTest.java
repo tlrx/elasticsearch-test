@@ -4,8 +4,6 @@
 package com.github.tlrx.elasticsearch.samples.search;
 
 import com.github.tlrx.elasticsearch.test.annotations.*;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchMappingField.Store;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchMappingField.Types;
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
