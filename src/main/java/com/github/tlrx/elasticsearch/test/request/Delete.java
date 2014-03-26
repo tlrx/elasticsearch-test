@@ -19,9 +19,12 @@
 package com.github.tlrx.elasticsearch.test.request;
 
 import com.github.tlrx.elasticsearch.test.EsSetupRuntimeException;
+import com.github.tlrx.elasticsearch.test.provider.JSONProvider;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 
 /**
