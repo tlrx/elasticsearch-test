@@ -1,9 +1,5 @@
 package com.github.tlrx.elasticsearch.test.annotations;
 
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchMappingField.Index;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchMappingField.Store;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchMappingField.TermVector;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchMappingField.Types;
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
@@ -51,11 +47,12 @@ public class ElasticsearchMappingAnnotationTest {
                                     @ElasticsearchMappingField(name = "description", store = Store.Yes, type = Types.String, index = Index.Analyzed, analyzerName = "standard"),
                                     @ElasticsearchMappingField(name = "role", store = Store.No, type = Types.String, index = Index.Analyzed, indexAnalyzerName = "keyword", searchAnalyzerName = "standard"),
                                     @ElasticsearchMappingField(name = "publication_date", store = Store.No, type = Types.Date, index = Index.Not_Analyzed),
-                                    @ElasticsearchMappingField(name = "name", type = Types.String,
-                                            fields = {
-                                                    @ElasticsearchMappingField.ElasticsearchMappingSubField(name = "name", type = Types.String, index = Index.Analyzed, termVector = TermVector.With_Offsets),
-                                                    @ElasticsearchMappingField.ElasticsearchMappingSubField(name = "untouched", type = Types.String, index = Index.Not_Analyzed, termVector = TermVector.With_Positions_Offsets)
-                                            })
+                                    @ElasticsearchMappingField(name = "name", type = Types.String, index = Index.Analyzed, termVector = TermVector.With_Offsets,
+                                        fields = {
+                                                @ElasticsearchMappingSubField(name = "untouched", type = Types.String, index = Index.Not_Analyzed, termVector = TermVector.With_Positions_Offsets),
+                                                @ElasticsearchMappingSubField(name = "stored", type = Types.String, index = Index.No, store = Store.Yes)
+                                        }
+                                    )
                             }),
                     @ElasticsearchMapping(typeName = "rating",
                             source = true,
@@ -151,10 +148,13 @@ public class ElasticsearchMappingAnnotationTest {
             assertEquals("string", untouched.get("type"));
             assertNull("Store = No must be null", untouched.get("store"));
             assertEquals("not_analyzed", untouched.get("index"));
+            assertEquals("with_positions_offsets", untouched.get("term_vector"));
 
-            // Check name.name
-            Map<String, Object> nameName = (Map<String, Object>) fields.get("name");
-            assertEquals("string", nameName.get("type"));
+            // Check name.stored
+            Map<String, Object> stored = (Map<String, Object>) fields.get("stored");
+            assertEquals("string", stored.get("type"));
+            assertEquals(Boolean.TRUE, stored.get("store"));
+            assertEquals("no", stored.get("index"));
 
         } catch (IOException e) {
             fail("Exception when reading mapping metadata");
