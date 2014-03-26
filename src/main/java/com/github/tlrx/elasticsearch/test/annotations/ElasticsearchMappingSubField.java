@@ -12,7 +12,7 @@ import java.lang.annotation.RetentionPolicy;
  * @author tlrx
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ElasticsearchMappingField {
+public @interface ElasticsearchMappingSubField {
 
     /**
      * Globally defined analyzer
@@ -59,8 +59,4 @@ public @interface ElasticsearchMappingField {
      */
     TermVector termVector() default TermVector.No;
 
-    /**
-     * The fields
-     */
-    ElasticsearchMappingSubField[] fields() default {};
 }

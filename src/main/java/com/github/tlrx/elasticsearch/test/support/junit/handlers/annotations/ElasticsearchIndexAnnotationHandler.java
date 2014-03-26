@@ -221,7 +221,7 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
                 .field("type", field.type().toString().toLowerCase())
                 .field("store", field.store().toString().toLowerCase());
 
-        if (!field.index().equals(ElasticsearchMappingField.Index.Undefined)) {
+        if (!field.index().equals(Index.Undefined)) {
             builder.field("index", field.index().toString().toLowerCase());
         }
 
@@ -241,19 +241,15 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
         }
 
         if ((field.termVector() != null)
-                && (!ElasticsearchMappingField.TermVector.No.equals(field.termVector()))) {
+                && (!TermVector.No.equals(field.termVector()))) {
             builder.field("term_vector", field.termVector().toString().toLowerCase());
         }
 
-        if ((field.fields().length != 0)) {
-            ElasticsearchMappingField.ElasticsearchMappingSubField[] fields = field.fields();
-            if ((fields != null) && (fields.length > 0)) {
-                builder = builder.startObject("fields");
-
-                for (ElasticsearchMappingField.ElasticsearchMappingSubField subField : fields) {
-                    builder = buildField(subField, builder);
-                }
-                builder = builder.endObject();
+        // Manage sub fields
+        if (field.fields().length > 0) {
+            builder = builder.startObject("fields");
+            for (ElasticsearchMappingSubField subField : field.fields()) {
+                builder = buildSubField(subField, builder);
             }
             builder = builder.endObject();
         }
@@ -262,40 +258,46 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
         return builder;
     }
 
+    /**
+     * Builds a mapping for a sub field of a field
+     *
+     * @param subField
+     * @param builder
+     * @return
+     * @throws IOException
+     */
+    private XContentBuilder buildSubField(ElasticsearchMappingSubField subField, XContentBuilder builder) throws IOException {
+        builder = builder.startObject(subField.name())
+                .field("type", subField.type().toString().toLowerCase())
+                .field("store", subField.store().toString().toLowerCase());
 
-    private XContentBuilder buildField(ElasticsearchMappingField.ElasticsearchMappingSubField field, XContentBuilder builder) throws IOException {
-        builder = builder.startObject(field.name())
-                .field("type", field.type().toString().toLowerCase())
-                .field("store", field.store().toString().toLowerCase());
-
-        if (!field.index().equals(ElasticsearchMappingField.Index.Undefined)) {
-            builder.field("index", field.index().toString().toLowerCase());
+        if (!subField.index().equals(Index.Undefined)) {
+            builder.field("index", subField.index().toString().toLowerCase());
         }
 
-        if ((field.analyzerName() != null)
-                && (!ElasticsearchMappingField.DEFAULT_ANALYZER.equals(field.analyzerName()))) {
-            builder.field("analyzer", field.analyzerName().toString().toLowerCase());
+        if ((subField.analyzerName() != null)
+                && (!ElasticsearchMappingField.DEFAULT_ANALYZER.equals(subField.analyzerName()))) {
+            builder.field("analyzer", subField.analyzerName().toString().toLowerCase());
         }
 
-        if ((field.indexAnalyzerName() != null)
-                && (!ElasticsearchMappingField.DEFAULT_ANALYZER.equals(field.indexAnalyzerName()))) {
-            builder.field("index_analyzer", field.indexAnalyzerName().toString().toLowerCase());
+        if ((subField.indexAnalyzerName() != null)
+                && (!ElasticsearchMappingField.DEFAULT_ANALYZER.equals(subField.indexAnalyzerName()))) {
+            builder.field("index_analyzer", subField.indexAnalyzerName().toString().toLowerCase());
         }
 
-        if ((field.searchAnalyzerName() != null)
-                && (!ElasticsearchMappingField.DEFAULT_ANALYZER.equals(field.searchAnalyzerName()))) {
-            builder.field("search_analyzer", field.searchAnalyzerName().toString().toLowerCase());
+        if ((subField.searchAnalyzerName() != null)
+                && (!ElasticsearchMappingField.DEFAULT_ANALYZER.equals(subField.searchAnalyzerName()))) {
+            builder.field("search_analyzer", subField.searchAnalyzerName().toString().toLowerCase());
         }
 
-        if ((field.termVector() != null)
-                && (!ElasticsearchMappingField.TermVector.No.equals(field.termVector()))) {
-            builder.field("term_vector", field.termVector().toString().toLowerCase());
+        if ((subField.termVector() != null)
+                && (!TermVector.No.equals(subField.termVector()))) {
+            builder.field("term_vector", subField.termVector().toString().toLowerCase());
         }
 
         builder = builder.endObject();
         return builder;
     }
-
 
     /**
      * Builds a mapping for a document type
@@ -303,7 +305,7 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
      * @param mapping
      * @throws IOException
      */
-    private XContentBuilder buildMapping(ElasticsearchMapping mapping) throws IOException {
+    private XContentBuilder buildMapping(ElasticsearchMapping mapping) {
         XContentBuilder builder = null;
 
         try {
