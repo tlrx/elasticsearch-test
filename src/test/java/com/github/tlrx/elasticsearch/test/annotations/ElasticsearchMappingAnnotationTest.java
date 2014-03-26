@@ -153,7 +153,7 @@ public class ElasticsearchMappingAnnotationTest {
             // Check name.stored
             Map<String, Object> stored = (Map<String, Object>) fields.get("stored");
             assertEquals("string", stored.get("type"));
-            assertEquals("yes", stored.get("store"));
+            assertEquals(Boolean.TRUE, stored.get("store"));
             assertEquals("analyzed", stored.get("index"));
 
             // Check name.name
