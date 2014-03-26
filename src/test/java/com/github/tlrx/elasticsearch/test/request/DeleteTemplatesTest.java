@@ -43,7 +43,7 @@ public class DeleteTemplatesTest {
     public boolean existsTemplate(String templateName) {
         ClusterStateRequestBuilder clusterStateRequestBuilder =
                 ClusterStateAction.INSTANCE.newRequestBuilder(esSetup.client().admin().cluster())
-                        .setFilterAll().setFilterMetaData(false);
+                        .all().setMetaData(false);
         ClusterStateResponse clusterStateResponse = clusterStateRequestBuilder.execute().actionGet();
         IndexTemplateMetaData indexTemplateMetaData = clusterStateResponse.getState().getMetaData()
                 .getTemplates().get(templateName);

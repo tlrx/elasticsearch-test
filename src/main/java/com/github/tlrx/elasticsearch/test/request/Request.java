@@ -18,7 +18,7 @@
  */
 package com.github.tlrx.elasticsearch.test.request;
 
-import org.elasticsearch.ElasticSearchException;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.client.Client;
 
 /**
@@ -28,6 +28,6 @@ import org.elasticsearch.client.Client;
  */
 public interface Request<T> {
 
-    T execute(Client client) throws ElasticSearchException;
+    T execute(Client client) throws ElasticsearchException;
 
 }

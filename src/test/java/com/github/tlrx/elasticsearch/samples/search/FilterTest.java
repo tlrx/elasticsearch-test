@@ -53,7 +53,7 @@ public class FilterTest {
         // Search for match_all and filter "tags:french"
         response = client.prepareSearch(INDEX)
                 .setQuery(QueryBuilders.matchAllQuery())
-                .setFilter(FilterBuilders.termFilter("tags", "french"))
+                .setPostFilter(FilterBuilders.termFilter("tags", "french"))
                 .execute()
                 .actionGet();
         assertEquals(7L, response.getHits().totalHits());
@@ -61,7 +61,7 @@ public class FilterTest {
         // Search for match_all and filter "tags:poetry"
         response = client.prepareSearch(INDEX)
                 .setQuery(QueryBuilders.matchAllQuery())
-                .setFilter(FilterBuilders.termFilter("tags", "poetry"))
+                .setPostFilter(FilterBuilders.termFilter("tags", "poetry"))
                 .execute()
                 .actionGet();
         assertEquals(3L, response.getHits().totalHits());
@@ -69,7 +69,7 @@ public class FilterTest {
         // Search for match_all and filter "tags:literature" and "year:1829"
         response = client.prepareSearch(INDEX)
                 .setQuery(QueryBuilders.matchAllQuery())
-                .setFilter(FilterBuilders.andFilter(
+                .setPostFilter(FilterBuilders.andFilter(
                         FilterBuilders.termFilter("tags", "literature"),
                         FilterBuilders.termFilter("year", "1829")))
                 .execute()

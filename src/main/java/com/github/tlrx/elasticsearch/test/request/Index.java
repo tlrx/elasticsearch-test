@@ -20,7 +20,7 @@ package com.github.tlrx.elasticsearch.test.request;
 
 import com.github.tlrx.elasticsearch.test.EsSetupRuntimeException;
 import com.github.tlrx.elasticsearch.test.provider.JSONProvider;
-import org.elasticsearch.ElasticSearchException;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
@@ -52,7 +52,7 @@ public class Index implements Request<Void> {
     }
 
     @Override
-    public Void execute(final Client client) throws ElasticSearchException {
+    public Void execute(final Client client) throws ElasticsearchException {
         try {
             IndexResponse response = client.index(request).get();
         } catch (Exception e) {

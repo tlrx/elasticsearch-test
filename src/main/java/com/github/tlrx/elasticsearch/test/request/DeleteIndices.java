@@ -18,7 +18,7 @@
  */
 package com.github.tlrx.elasticsearch.test.request;
 
-import org.elasticsearch.ElasticSearchException;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.client.Client;
 
 import java.util.Arrays;
@@ -35,7 +35,7 @@ public class DeleteIndices implements Request<Void> {
     }
 
     @Override
-    public Void execute(Client client) throws ElasticSearchException {
+    public Void execute(Client client) throws ElasticsearchException {
         client.admin().indices().prepareDelete(indices).execute().actionGet();
         return null;
     }

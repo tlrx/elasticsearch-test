@@ -25,11 +25,6 @@ public @interface ElasticsearchMapping {
     ElasticsearchMappingField[] properties() default {};
 
     /**
-     * Multi Fields of the mapping
-     */
-    ElasticsearchMappingMultiField[] propertiesMulti() default {};
-
-    /**
      * The source's "enabled" value (default to true)
      */
     boolean source() default true;

@@ -20,7 +20,7 @@ package com.github.tlrx.elasticsearch.test.request;
 
 import com.github.tlrx.elasticsearch.test.EsSetupRuntimeException;
 import com.github.tlrx.elasticsearch.test.provider.JSONProvider;
-import org.elasticsearch.ElasticSearchException;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
@@ -97,7 +97,7 @@ public class CreateIndex implements Request<Void> {
     }
 
     @Override
-    public Void execute(final Client client) throws ElasticSearchException {
+    public Void execute(final Client client) throws ElasticsearchException {
         BulkRequestBuilder bulkRequestBuilder = null;
         try {
             if ((bulks != null) && (!bulks.isEmpty())) {
