@@ -27,6 +27,7 @@ import org.elasticsearch.action.admin.indices.template.delete.DeleteIndexTemplat
 import org.elasticsearch.action.admin.indices.template.delete.DeleteIndexTemplateRequest;
 import org.elasticsearch.action.admin.indices.template.delete.DeleteIndexTemplateResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.collect.Lists;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -73,9 +74,9 @@ public class DeleteTemplates implements Request<Void> {
             // Retrieve all templates
             ClusterStateRequestBuilder clusterStateRequestBuilder =
                     ClusterStateAction.INSTANCE.newRequestBuilder(client.admin().cluster())
-                            .setFilterAll().setFilterMetaData(false);
+                            .all().setMetaData(false);
             ClusterStateResponse clusterStateResponse = clusterStateRequestBuilder.execute().actionGet();
-            templatesColl = clusterStateResponse.getState().getMetaData().getTemplates().keySet();
+            templatesColl = Lists.newArrayList(clusterStateResponse.getState().getMetaData().getTemplates().keysIt());
         } else {
             // Use provided templates
             templatesColl = Arrays.asList(templates);

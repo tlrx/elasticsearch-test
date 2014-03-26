@@ -81,7 +81,7 @@ public class ElasticsearchMappingAnnotationTest {
         // Checks if mapping has been created
         ClusterStateResponse stateResponse = adminClient.cluster()
                 .prepareState()
-                .setFilterIndices("library").execute()
+                .setIndices("library").execute()
                 .actionGet();
 
         IndexMetaData indexMetaData = stateResponse.getState().getMetaData().index("library");
