@@ -50,7 +50,7 @@ public class ElasticsearchMappingAnnotationTest {
                                     @ElasticsearchMappingField(name = "name", type = Types.String, index = Index.Analyzed, termVector = TermVector.With_Offsets,
                                         fields = {
                                                 @ElasticsearchMappingSubField(name = "untouched", type = Types.String, index = Index.Not_Analyzed, termVector = TermVector.With_Positions_Offsets),
-                                                @ElasticsearchMappingSubField(name = "stored", type = Types.String, index = Index.Analyzed, store = Store.Yes)
+                                                @ElasticsearchMappingSubField(name = "stored", type = Types.String, index = Index.No, store = Store.Yes)
                                         }
                                     )
                             }),
@@ -154,11 +154,7 @@ public class ElasticsearchMappingAnnotationTest {
             Map<String, Object> stored = (Map<String, Object>) fields.get("stored");
             assertEquals("string", stored.get("type"));
             assertEquals(Boolean.TRUE, stored.get("store"));
-            assertEquals("analyzed", stored.get("index"));
-
-            // Check name.name
-            Map<String, Object> nameName = (Map<String, Object>) fields.get("name");
-            assertEquals("string", nameName.get("type"));
+            assertEquals("no", stored.get("index"));
 
         } catch (IOException e) {
             fail("Exception when reading mapping metadata");
