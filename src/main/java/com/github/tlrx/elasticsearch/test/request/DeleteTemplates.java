@@ -19,7 +19,7 @@
 package com.github.tlrx.elasticsearch.test.request;
 
 import com.github.tlrx.elasticsearch.test.EsSetupRuntimeException;
-import org.elasticsearch.ElasticSearchException;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateAction;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateRequestBuilder;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
@@ -83,7 +83,7 @@ public class DeleteTemplates implements Request<Void> {
         return templatesColl;
     }
     @Override
-    public Void execute(Client client) throws ElasticSearchException {
+    public Void execute(Client client) throws ElasticsearchException {
         Set<String> unacknowledgedTemplates = new HashSet<String>();
         EsSetupRuntimeException runtimeException = null;
         for (String template : getTemplates(client)) {

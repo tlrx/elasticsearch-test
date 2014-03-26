@@ -5,7 +5,7 @@ package com.github.tlrx.elasticsearch.test.support.junit.handlers.annotations;
 
 import com.github.tlrx.elasticsearch.test.annotations.*;
 import com.github.tlrx.elasticsearch.test.support.junit.handlers.MethodLevelElasticsearchAnnotationHandler;
-import org.elasticsearch.ElasticSearchException;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
@@ -57,9 +57,9 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
      * @param nodeName
      * @param indexName
      * @throws Exception
-     * @throws ElasticSearchException
+     * @throws ElasticsearchException
      */
-    private void clean(Map<String, Object> context, String nodeName, String indexName) throws ElasticSearchException, Exception {
+    private void clean(Map<String, Object> context, String nodeName, String indexName) throws ElasticsearchException, Exception {
         client(context, nodeName).prepareDeleteByQuery(indexName)
                 .setQuery(QueryBuilders.matchAllQuery())
                 .execute().actionGet();
@@ -71,10 +71,10 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
      * @param context
      * @param nodeName
      * @param indexName
-     * @throws ElasticSearchException
+     * @throws ElasticsearchException
      * @throws Exception
      */
-    private void deleteIndex(Map<String, Object> context, String nodeName, String indexName) throws ElasticSearchException, Exception {
+    private void deleteIndex(Map<String, Object> context, String nodeName, String indexName) throws ElasticsearchException, Exception {
         DeleteIndexResponse response = admin(context, nodeName).indices().prepareDelete(indexName).execute().actionGet();
         if (!response.isAcknowledged()) {
             throw new Exception("Could not delete index [" + indexName + "]");
@@ -88,10 +88,10 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
      * @param nodeName
      * @param indexName
      * @param settings
-     * @throws ElasticSearchException
+     * @throws ElasticsearchException
      * @throws Exception
      */
-    private void createIndex(Map<String, Object> context, String nodeName, String indexName, Settings settings) throws ElasticSearchException, Exception {
+    private void createIndex(Map<String, Object> context, String nodeName, String indexName, Settings settings) throws ElasticsearchException, Exception {
         CreateIndexRequestBuilder builder = admin(context, nodeName).indices().prepareCreate(indexName);
         if (settings != null) {
             builder.setSettings(settings);
@@ -111,10 +111,10 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
      * @param indexName
      * @param type
      * @param mappingBuilder
-     * @throws ElasticSearchException
+     * @throws ElasticsearchException
      * @throws Exception
      */
-    private void putIndexMapping(Map<String, Object> context, String nodeName, String indexName, String type, XContentBuilder mappingBuilder) throws ElasticSearchException, Exception {
+    private void putIndexMapping(Map<String, Object> context, String nodeName, String indexName, String type, XContentBuilder mappingBuilder) throws ElasticsearchException, Exception {
         PutMappingResponse response = admin(context, nodeName).indices()
                 .preparePutMapping(indexName)
                 .setType(type)

@@ -18,7 +18,7 @@
  */
 package com.github.tlrx.elasticsearch.test.request;
 
-import org.elasticsearch.ElasticSearchException;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
@@ -43,7 +43,7 @@ public class Exists implements Request<Boolean> {
     }
 
     @Override
-    public Boolean execute(Client client) throws ElasticSearchException {
+    public Boolean execute(Client client) throws ElasticsearchException {
         if ((index != null) && (type != null) && (id != null)) {
 
             // Check if a document exists
