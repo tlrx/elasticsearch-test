@@ -104,7 +104,7 @@ public class CreateIndex implements Request<Void> {
                 bulkRequestBuilder = client.prepareBulk();
                 for (JSONProvider jsonProvider : bulks) {
                     byte[] content = jsonProvider.toJson().getBytes("UTF-8");
-                    bulkRequestBuilder.add(content, 0, content.length, true);
+                    bulkRequestBuilder.add(content, 0, content.length);
                 }
             }
 

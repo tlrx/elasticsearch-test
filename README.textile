@@ -11,7 +11,8 @@ Here you will find:
 h3. Versions
 
 |_. elasticsearch-test	|_. ElasticSearch|
-|   master (1.4.2)     |     1.4.2     |
+|   master(1.7.2)    |    1.72   |
+|   1.4.2     |     1.4.2     |
 |   1.2.1               |     1.2.1      |
 |   1.1.0               |     1.1.0      |
 |   0.90.6		        |     0.90.6	 |

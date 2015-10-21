@@ -3,7 +3,7 @@
 
     <groupId>com.github.tlrx</groupId>
     <artifactId>elasticsearch-test</artifactId>
-    <version>1.4.2</version>
+    <version>1.7.2</version>
     <packaging>jar</packaging>
     <name>elasticsearch-test</name>
     <description>elasticsearch-test, a framework that makes ElasticSearch unit testing a breeze</description>
@@ -18,7 +18,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <elasticsearch.version>1.4.2</elasticsearch.version>
+        <elasticsearch.version>1.7.2</elasticsearch.version>
         <github.global.server>github</github.global.server>
     </properties>
 
