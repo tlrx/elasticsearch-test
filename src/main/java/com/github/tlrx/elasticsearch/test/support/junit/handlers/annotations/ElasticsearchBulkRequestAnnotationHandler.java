@@ -59,7 +59,7 @@ public class ElasticsearchBulkRequestAnnotationHandler extends AbstractAnnotatio
 
             // Execute the BulkRequest
             BulkResponse response = client.prepareBulk()
-                    .add(buffer, 0, buffer.length, true, elasticsearchBulkRequest.defaultIndexName(), elasticsearchBulkRequest.defaultTypeName())
+                    .add(buffer, 0, buffer.length, elasticsearchBulkRequest.defaultIndexName(), elasticsearchBulkRequest.defaultTypeName())
                     .setRefresh(true)
                     .execute()
                     .actionGet();

@@ -108,7 +108,6 @@ public class OptimizeTest {
         admin.indices().prepareOptimize(INDEX)
                 .setFlush(true)
                 .setOnlyExpungeDeletes(true)
-                .setWaitForMerge(true)
                 .execute()
                 .actionGet();
 
