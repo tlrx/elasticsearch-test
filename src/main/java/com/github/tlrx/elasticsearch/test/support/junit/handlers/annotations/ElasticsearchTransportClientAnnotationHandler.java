@@ -7,12 +7,12 @@ import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchTransportClie
 import com.github.tlrx.elasticsearch.test.support.junit.handlers.ClassLevelElasticsearchAnnotationHandler;
 import com.github.tlrx.elasticsearch.test.support.junit.handlers.FieldLevelElasticsearchAnnotationHandler;
 import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -33,15 +33,15 @@ public class ElasticsearchTransportClientAnnotationHandler implements ClassLevel
         ElasticsearchTransportClient elasticsearchTransportClient = (ElasticsearchTransportClient) annotation;
 
         // Settings
-        Settings settings = ImmutableSettings.settingsBuilder()
+        Settings settings = Settings.builder()
                 .put("cluster.name", String.valueOf(elasticsearchTransportClient.clusterName()))
                 .build();
 
-        TransportClient client = new TransportClient(settings);
+        TransportClient client = TransportClient.builder().settings(settings).build();
 
         int n = 0;
         for (String host : elasticsearchTransportClient.hostnames()) {
-            client.addTransportAddress(new InetSocketTransportAddress(host, elasticsearchTransportClient.ports()[n++]));
+            client.addTransportAddress(new InetSocketTransportAddress(new InetSocketAddress(host, elasticsearchTransportClient.ports()[n++])));
         }
 
         if (client != null) {

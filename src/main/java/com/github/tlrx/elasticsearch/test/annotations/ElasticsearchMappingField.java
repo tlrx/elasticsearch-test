@@ -45,11 +45,6 @@ public @interface ElasticsearchMappingField {
     String analyzerName() default DEFAULT_ANALYZER;
 
     /**
-     * The analyzer used to analyze the text contents when analyzed during indexing.
-     */
-    String indexAnalyzerName() default DEFAULT_ANALYZER;
-
-    /**
      * The analyzer used to analyze the field when part of a query string.
      */
     String searchAnalyzerName() default DEFAULT_ANALYZER;

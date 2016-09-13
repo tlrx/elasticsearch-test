@@ -3,6 +3,7 @@
  */
 package com.github.tlrx.elasticsearch.test.support.junit.handlers.annotations;
 
+import com.github.tlrx.elasticsearch.test.EsSetupRuntimeException;
 import com.github.tlrx.elasticsearch.test.annotations.*;
 import com.github.tlrx.elasticsearch.test.support.junit.handlers.MethodLevelElasticsearchAnnotationHandler;
 import org.elasticsearch.ElasticsearchException;
@@ -11,16 +12,18 @@ import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
+import org.elasticsearch.action.admin.indices.settings.get.GetSettingsResponse;
 import org.elasticsearch.client.AdminClient;
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.ImmutableSettings.Builder;
+import org.elasticsearch.client.IndicesAdminClient;
+import org.elasticsearch.common.io.stream.BytesStreamOutput;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.settings.Settings.Builder;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.index.query.QueryBuilders;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -60,9 +63,23 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
      * @throws ElasticsearchException
      */
     private void clean(Map<String, Object> context, String nodeName, String indexName) throws ElasticsearchException, Exception {
-        client(context, nodeName).prepareDeleteByQuery(indexName)
-                .setQuery(QueryBuilders.matchAllQuery())
-                .execute().actionGet();
+        AdminClient admin = admin(context, nodeName);
+        IndicesAdminClient indicesAdmin = admin.indices();
+        try(BytesStreamOutput streamOutput = new BytesStreamOutput()) {
+            // Get index settings
+            GetSettingsResponse indexSettings = indicesAdmin.prepareGetSettings(indexName).get();
+            indexSettings.writeTo(streamOutput);
+            streamOutput.flush();
+            // Delete index
+            DeleteIndexResponse deleteIndex = indicesAdmin.prepareDelete(indexName).get();
+            // Re-create index
+            indicesAdmin.prepareCreate(indexName)
+                    .setSource(streamOutput.bytes())
+                    .get();
+
+            // Wait for index to be yellow
+            admin.cluster().prepareHealth(indexName).setWaitForYellowStatus().get();
+        }
     }
 
     /**
@@ -168,7 +185,7 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
     private Settings buildIndexSettings(ElasticsearchIndex elasticsearchIndex) {
 
         // Build default settings
-        Builder settingsBuilder = ImmutableSettings.settingsBuilder();
+        Builder settingsBuilder = Settings.builder();
 
         String settingsFile = "config/mappings/" + elasticsearchIndex.indexName() + "/_settings.json";
         if (elasticsearchIndex.settingsFile().length() > 0) {
@@ -176,8 +193,14 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
         }
 
         // Loads settings from settings file
-        Settings configSettings = ImmutableSettings.settingsBuilder().loadFromClasspath(settingsFile).build();
-        settingsBuilder.put(configSettings);
+        try(InputStream settingsStreams = Thread.currentThread().getContextClassLoader().getResourceAsStream(settingsFile)) {
+            if (settingsStreams != null) {
+                Settings configSettings = Settings.builder().loadFromStream(settingsFile, settingsStreams).build();
+                settingsBuilder.put(configSettings);
+            }
+        } catch (IOException e) {
+            throw new EsSetupRuntimeException("Failed to load settings "+settingsFile, e);
+        }
 
         // Manage analysis filters & tokenizers
         ElasticsearchAnalysis analysis = elasticsearchIndex.analysis();
@@ -228,11 +251,6 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
         if ((field.analyzerName() != null)
                 && (!ElasticsearchMappingField.DEFAULT_ANALYZER.equals(field.analyzerName()))) {
             builder.field("analyzer", field.analyzerName().toString().toLowerCase());
-        }
-
-        if ((field.indexAnalyzerName() != null)
-                && (!ElasticsearchMappingField.DEFAULT_ANALYZER.equals(field.indexAnalyzerName()))) {
-            builder.field("index_analyzer", field.indexAnalyzerName().toString().toLowerCase());
         }
 
         if ((field.searchAnalyzerName() != null)
@@ -314,16 +332,6 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
                     .startObject(mapping.typeName())
                     .startObject("_source")
                         .field("enabled", String.valueOf(mapping.source()));
-
-            if (!mapping.compress()) {
-                builder.field("compress", String.valueOf(mapping.compress()));
-            } else {
-                builder.field("compress", String.valueOf(mapping.compress()));
-
-                if (!"".equals(mapping.compressThreshold())) {
-                    builder.field("compress_threshold", mapping.compressThreshold());
-                }
-            }
             builder.endObject();
 
             if (!"".equals(mapping.parent())) {
@@ -344,9 +352,6 @@ public class ElasticsearchIndexAnnotationHandler extends AbstractAnnotationHandl
             if (mapping.timestamp()) {
                 builder = builder.startObject("_timestamp").field("enabled",
                         String.valueOf(mapping.timestamp()));
-                if (mapping.timestampPath().length() > 0) {
-                    builder = builder.field("path", mapping.timestampPath());
-                }
                 if (mapping.timestampFormat().length() > 0) {
                     builder = builder.field("format", mapping.timestampFormat());
                 }

@@ -129,7 +129,7 @@ public class ElasticsearchIndexAnnotationTest {
 
         assertTrue("Index must exist", existResponse.isExists());
 
-        adminClient.cluster().prepareHealth("people").request().waitForGreenStatus();
+        adminClient.cluster().prepareHealth("people").setWaitForYellowStatus().get();
 
         // Check that document has been cleaned/deleted after previous @Test method execution
         assertEquals("Document #1 must not exist", 0, client.prepareSearch("people").setQuery(QueryBuilders.idsQuery("person").addIds("1")).execute().actionGet().getHits().totalHits());
@@ -143,7 +143,7 @@ public class ElasticsearchIndexAnnotationTest {
         ClusterStateResponse response = adminClient.cluster().prepareState()
                 .execute().actionGet();
 
-        Settings indexSettings = response.getState().metaData().index("documents").settings();
+        Settings indexSettings = response.getState().metaData().index("documents").getSettings();
         assertEquals("3", indexSettings.get("index.number_of_shards"));
         assertEquals("7", indexSettings.get("index.number_of_replicas"));
         assertEquals("true", indexSettings.get("index.analysis.filter.test_word_delimiter.split_on_numerics"));

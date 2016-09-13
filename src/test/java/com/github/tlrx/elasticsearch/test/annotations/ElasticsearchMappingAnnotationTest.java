@@ -33,36 +33,34 @@ public class ElasticsearchMappingAnnotationTest {
     @SuppressWarnings("unchecked")
     @ElasticsearchIndex(indexName = "library",
             mappings = {
+                    @ElasticsearchMapping(typeName = "rating",
+                            source = true,
+                            parent = "book",
+                            timestamp = true,
+                            timestampFormat = "YYYY-MM-dd",
+                            properties = {
+                                    @ElasticsearchMappingField(name = "stars", index = Index.Not_Analyzed, type = Types.Integer)
+                            }
+                    ),
                     @ElasticsearchMapping(typeName = "book",
                             source = false,
-                            compress = false,
                             ttl = true,
                             ttlValue = "2d",
                             timestamp = true,
                             timestampFormat = "YYYY-MM-dd",
-                            timestampPath = "publication_date",
                             properties = {
                                     @ElasticsearchMappingField(name = "title", store = Store.Yes, type = Types.String),
                                     @ElasticsearchMappingField(name = "author", store = Store.No, type = Types.String, index = Index.Not_Analyzed),
                                     @ElasticsearchMappingField(name = "description", store = Store.Yes, type = Types.String, index = Index.Analyzed, analyzerName = "standard"),
-                                    @ElasticsearchMappingField(name = "role", store = Store.No, type = Types.String, index = Index.Analyzed, indexAnalyzerName = "keyword", searchAnalyzerName = "standard"),
+                                    @ElasticsearchMappingField(name = "role", store = Store.No, type = Types.String, index = Index.Analyzed, analyzerName = "keyword", searchAnalyzerName = "standard"),
                                     @ElasticsearchMappingField(name = "publication_date", store = Store.No, type = Types.Date, index = Index.Not_Analyzed),
                                     @ElasticsearchMappingField(name = "name", type = Types.String, index = Index.Analyzed, termVector = TermVector.With_Offsets,
-                                        fields = {
-                                                @ElasticsearchMappingSubField(name = "untouched", type = Types.String, index = Index.Not_Analyzed, termVector = TermVector.With_Positions_Offsets),
-                                                @ElasticsearchMappingSubField(name = "stored", type = Types.String, index = Index.No, store = Store.Yes)
-                                        }
+                                            fields = {
+                                                    @ElasticsearchMappingSubField(name = "untouched", type = Types.String, index = Index.Not_Analyzed, termVector = TermVector.With_Positions_Offsets),
+                                                    @ElasticsearchMappingSubField(name = "stored", type = Types.String, index = Index.No, store = Store.Yes)
+                                            }
                                     )
-                            }),
-                    @ElasticsearchMapping(typeName = "rating",
-                            source = true,
-                            compress = true,
-                            compressThreshold = "10kb",
-                            parent = "book",
-                            properties = {
-                                    @ElasticsearchMappingField(name = "stars", index = Index.Not_Analyzed, type = Types.Integer)
-                            }
-                    )
+                            })
             })
     public void testElasticsearchMapping() {
 
@@ -91,7 +89,6 @@ public class ElasticsearchMappingAnnotationTest {
             // Check _source
             Map<String, Object> source = (Map<String, Object>) def.get("_source");
             assertNotNull("_source must exists", source);
-            assertEquals(Boolean.FALSE, source.get("compress"));
             assertEquals(Boolean.FALSE, source.get("enabled"));
 
             // Check TTL
@@ -105,7 +102,6 @@ public class ElasticsearchMappingAnnotationTest {
             assertNotNull("_timestamp must exist", timestamp);
             assertEquals(Boolean.TRUE, timestamp.get("enabled"));
             assertEquals("YYYY-MM-dd", timestamp.get("format"));
-            assertEquals("publication_date", timestamp.get("path"));
 
             // Check properties
             Map<String, Object> properties = (Map<String, Object>) def.get("properties");
@@ -134,7 +130,7 @@ public class ElasticsearchMappingAnnotationTest {
             assertNull("index = analyzed must be null", role.get("index"));
             assertEquals("string", role.get("type"));
             assertNull("Store = No must be null", role.get("store"));
-            assertEquals("keyword", role.get("index_analyzer"));
+            assertEquals("keyword", role.get("analyzer"));
             assertEquals("standard", role.get("search_analyzer"));
 
             // Check name
@@ -169,9 +165,7 @@ public class ElasticsearchMappingAnnotationTest {
 
             // Check _source
             Map<String, Object> source = (Map<String, Object>) def.get("_source");
-            assertNotNull("_source must exists", source);
-            assertEquals(Boolean.TRUE, source.get("compress"));
-            assertEquals("10kb", source.get("compress_threshold"));
+            assertNull("_source must exists", source);
 
             // Check _parent
             Map<String, Object> parent = (Map<String, Object>) def.get("_parent");

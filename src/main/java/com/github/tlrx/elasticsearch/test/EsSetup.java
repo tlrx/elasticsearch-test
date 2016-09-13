@@ -20,8 +20,8 @@ package com.github.tlrx.elasticsearch.test;
 
 import com.github.tlrx.elasticsearch.test.provider.*;
 import com.github.tlrx.elasticsearch.test.request.*;
+import com.google.common.base.Preconditions;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.Preconditions;
 import org.elasticsearch.common.settings.Settings;
 
 /**
@@ -319,7 +319,7 @@ public class EsSetup {
      * @return the total number of documents
      */
     public Long countAll() {
-        return doExecute(new Count());
+        return doExecute(new Count("_all"));
     }
 
     /**

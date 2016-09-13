@@ -7,7 +7,6 @@ import com.github.tlrx.elasticsearch.test.annotations.*;
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,8 +36,10 @@ public class FilterTest {
                             @ElasticsearchMappingField(name = "title", store = Store.Yes, type = Types.String),
                             @ElasticsearchMappingField(name = "tags", store = Store.Yes, type = Types.String),
                             @ElasticsearchMappingField(name = "year", store = Store.Yes, type = Types.Integer),
-                            @ElasticsearchMappingField(name = "author.firstname", store = Store.Yes, type = Types.String),
-                            @ElasticsearchMappingField(name = "author.lastname", store = Store.Yes, type = Types.String)
+                            @ElasticsearchMappingField(name = " author", fields = {
+                                    @ElasticsearchMappingSubField(name = "firstname", store = Store.Yes, type = Types.String),
+                                    @ElasticsearchMappingSubField(name = "lastname", store = Store.Yes, type = Types.String)
+                            })
                     })
             })
     @ElasticsearchBulkRequest(dataFile = "com/github/tlrx/elasticsearch/samples/search/FilterTest.json")
@@ -50,8 +51,8 @@ public class FilterTest {
 
         // Search for match_all and filter "tags:french"
         response = client.prepareSearch(INDEX)
-                .setQuery(QueryBuilders.matchAllQuery())
-                .setPostFilter(FilterBuilders.termFilter("tags", "french"))
+                .setQuery(QueryBuilders.constantScoreQuery(
+                        QueryBuilders.termQuery("tags", "french")))
                 .execute()
                 .actionGet();
         assertEquals(7L, response.getHits().totalHits());
@@ -59,17 +60,18 @@ public class FilterTest {
         // Search for match_all and filter "tags:poetry"
         response = client.prepareSearch(INDEX)
                 .setQuery(QueryBuilders.matchAllQuery())
-                .setPostFilter(FilterBuilders.termFilter("tags", "poetry"))
+                .setPostFilter(QueryBuilders.termQuery("tags", "poetry"))
                 .execute()
                 .actionGet();
         assertEquals(3L, response.getHits().totalHits());
 
         // Search for match_all and filter "tags:literature" and "year:1829"
         response = client.prepareSearch(INDEX)
-                .setQuery(QueryBuilders.matchAllQuery())
-                .setPostFilter(FilterBuilders.andFilter(
-                        FilterBuilders.termFilter("tags", "literature"),
-                        FilterBuilders.termFilter("year", "1829")))
+                .setQuery(QueryBuilders.constantScoreQuery(
+                        QueryBuilders.boolQuery()
+                                .must(QueryBuilders.termQuery("tags", "literature"))
+                                .must(QueryBuilders.termQuery("year", "1829"))
+                ))
                 .execute()
                 .actionGet();
         assertEquals(2L, response.getHits().totalHits());

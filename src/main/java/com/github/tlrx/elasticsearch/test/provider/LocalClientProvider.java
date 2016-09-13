@@ -19,16 +19,22 @@
 package com.github.tlrx.elasticsearch.test.provider;
 
 
+import com.github.tlrx.elasticsearch.test.EsSetupRuntimeException;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.io.FileSystemUtils;
-import org.elasticsearch.common.network.NetworkUtils;
-import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 
 /**
  * LocalClientProvider instantiates a local node with in-memory index store type.
@@ -79,19 +85,51 @@ public class LocalClientProvider implements ClientProvider {
         if ((node != null) && (!node.isClosed())) {
             node.close();
 
-            FileSystemUtils.deleteRecursively(new File("./target/elasticsearch-test/"), true);
+            deleteRecursively(new File("./target/elasticsearch-test/"));
+        }
+    }
+
+    /**
+     * Recursively delete a directory.
+     * Links are not handled properly.
+     */
+    public static void deleteRecursively(File dir) {
+        try {
+            Files.walkFileTree(dir.toPath(), new FileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                    return FileVisitResult.TERMINATE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
         }
     }
 
     protected Settings buildNodeSettings() {
         // Build settings
-        ImmutableSettings.Builder builder = ImmutableSettings.settingsBuilder()
+
+        Settings.Builder builder = Settings.builder()
                 .put("node.name", "node-test-" + System.currentTimeMillis())
                 .put("node.data", true)
-                .put("cluster.name", "cluster-test-" + NetworkUtils.getLocalAddress().getHostName())
-                .put("index.store.type", "memory")
-                .put("index.store.fs.memory.enabled", "true")
-                .put("gateway.type", "none")
+                .put("cluster.name", "cluster-test-" + getLocalHostName())
+                .put("path.home", "./target/elasticsearch-test")
                 .put("path.data", "./target/elasticsearch-test/data")
                 .put("path.work", "./target/elasticsearch-test/work")
                 .put("path.logs", "./target/elasticsearch-test/logs")
@@ -105,5 +143,16 @@ public class LocalClientProvider implements ClientProvider {
         }
 
         return builder.build();
+    }
+
+    /**
+     * Get local hostname
+     */
+    public static String getLocalHostName() {
+        try {
+            return InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException e) {
+            return "unknown";
+        }
     }
 }

@@ -3,21 +3,25 @@
  */
 package com.github.tlrx.elasticsearch.test.support.junit.handlers.annotations;
 
+import com.github.tlrx.elasticsearch.test.EsSetupRuntimeException;
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchSetting;
 import com.github.tlrx.elasticsearch.test.support.junit.handlers.ClassLevelElasticsearchAnnotationHandler;
 import com.github.tlrx.elasticsearch.test.support.junit.handlers.FieldLevelElasticsearchAnnotationHandler;
 import org.elasticsearch.common.io.FileSystemUtils;
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.ImmutableSettings.Builder;
+import org.elasticsearch.common.settings.Settings.Builder;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Map;
+
+import static com.github.tlrx.elasticsearch.test.provider.LocalClientProvider.deleteRecursively;
 
 /**
  * Handle {@link ElasticsearchNode} annotation
@@ -59,7 +63,7 @@ public class ElasticsearchNodeAnnotationHandler implements ClassLevelElasticsear
                 }
             }
         }
-        FileSystemUtils.deleteRecursively(new File(ES_HOME));
+        deleteRecursively(new File(ES_HOME));
     }
 
     public void handleField(Annotation annotation, Object instance, Map<String, Object> context, Field field) throws Exception {
@@ -108,22 +112,25 @@ public class ElasticsearchNodeAnnotationHandler implements ClassLevelElasticsear
     private Settings buildNodeSettings(ElasticsearchNode elasticsearchNode) {
 
         // Build default settings
-        Builder settingsBuilder = ImmutableSettings.settingsBuilder()
+        Builder settingsBuilder = Settings.settingsBuilder()
                 .put(NODE_NAME, elasticsearchNode.name())
                 .put("node.data", elasticsearchNode.data())
                 .put("cluster.name", elasticsearchNode.clusterName())
-                .put("index.store.type", "memory")
-                .put("index.store.fs.memory.enabled", "true")
-                .put("gateway.type", "none")
+                .put("path.home", ES_HOME)
                 .put("path.data", ES_HOME + "/data")
-                .put("path.work", ES_HOME + "/work")
                 .put("path.logs", ES_HOME + "/logs")
                 .put("index.number_of_shards", "1")
                 .put("index.number_of_replicas", "0");
 
         // Loads settings from configuration file
-        Settings configSettings = ImmutableSettings.settingsBuilder().loadFromClasspath(elasticsearchNode.configFile()).build();
-        settingsBuilder.put(configSettings);
+        String settingsFile = elasticsearchNode.configFile();
+        Settings configSettings;
+        try(InputStream settingsStreams = Thread.currentThread().getContextClassLoader().getResourceAsStream(settingsFile)) {
+            configSettings = Settings.builder().loadFromStream(settingsFile, settingsStreams).build();
+            settingsBuilder.put(configSettings);
+        } catch (IOException e) {
+            throw new EsSetupRuntimeException("Failed to load settings "+settingsFile, e);
+        }
 
         // Other settings
         ElasticsearchSetting[] settings = elasticsearchNode.settings();
