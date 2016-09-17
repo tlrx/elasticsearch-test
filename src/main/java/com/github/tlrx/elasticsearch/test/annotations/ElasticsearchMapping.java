@@ -30,16 +30,6 @@ public @interface ElasticsearchMapping {
     boolean source() default true;
 
     /**
-     * The source's "compress" value (default to true (since v0.90))
-     */
-    boolean compress() default true;
-
-    /**
-     * Compress threshold value
-     */
-    String compressThreshold() default "";
-
-    /**
      * Time To Live "enabled" value (default to false)
      */
     boolean ttl() default false;
@@ -53,12 +43,6 @@ public @interface ElasticsearchMapping {
      * Index the document's timestamp using the _timestamp field (default to false)
      */
     boolean timestamp() default false;
-
-    /**
-     * The path used to extract the timestamp from the document
-     * (default to "", meaning the "_timestamp" field should be explicitly set when indexing)
-     */
-    String timestampPath() default "";
 
     /**
      * The date format of the "_timestamp" field (default to "dateOptionalTime")

@@ -18,8 +18,8 @@
  */
 package com.github.tlrx.elasticsearch.test.provider;
 
+import com.google.common.base.Preconditions;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.Preconditions;
 import org.elasticsearch.common.unit.TimeValue;
 
 /**

@@ -17,6 +17,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 
@@ -31,6 +33,19 @@ public class VersionTest {
 
     @ElasticsearchClient
     Client client;
+
+    /**
+     * Extract current version number from error message
+     */
+    private static long getCurrentVersion(VersionConflictEngineException e) {
+        Pattern regex = Pattern.compile("current \\[(-?\\d+)\\]");
+        Matcher matcher = regex.matcher(e.getMessage());
+        if (matcher.find()) {
+            String version = matcher.group(1);
+            return Long.parseLong(version);
+        }
+        return -1;
+    }
 
     @Test
     @ElasticsearchIndex(indexName = "library")
@@ -76,7 +91,7 @@ public class VersionTest {
             fail("Expected a VersionConflictEngineException");
         } catch (VersionConflictEngineException e) {
             assertNotNull(e);
-            assertEquals("Current version must be 2", 2, e.getCurrentVersion());
+            assertEquals("Current version must be 2", 2, getCurrentVersion(e));
         }
 
         // Update book #1 with a right version number
@@ -97,7 +112,7 @@ public class VersionTest {
             fail("Expected a VersionConflictEngineException");
         } catch (VersionConflictEngineException e) {
             assertNotNull(e);
-            assertEquals("Current version must be 3", 3, e.getCurrentVersion());
+            assertEquals("Current version must be 3", 3, getCurrentVersion(e));
         }
     }
 
@@ -126,7 +141,7 @@ public class VersionTest {
             fail("Expected a VersionConflictEngineException");
         } catch (VersionConflictEngineException e) {
             assertNotNull(e);
-            assertEquals("Current version must be -1", -1, e.getCurrentVersion());
+            assertEquals("Current version must be -1", -1, getCurrentVersion(e));
         }
 
         // Index book #2 with a custom version  with external
@@ -165,7 +180,7 @@ public class VersionTest {
             fail("Expected a VersionConflictEngineException");
         } catch (VersionConflictEngineException e) {
             assertNotNull(e);
-            assertEquals(startVersion + 1, e.getCurrentVersion());
+            assertEquals(startVersion + 1, getCurrentVersion(e));
         }
 
         // Try to index book #2 with same version number
@@ -180,7 +195,7 @@ public class VersionTest {
             fail("Expected a VersionConflictEngineException");
         } catch (VersionConflictEngineException e) {
             assertNotNull(e);
-            assertEquals(startVersion + 1, e.getCurrentVersion());
+            assertEquals(startVersion + 1, getCurrentVersion(e));
         }
 
         // Try to index book #2 with greater version number
@@ -204,7 +219,7 @@ public class VersionTest {
             fail("Expected a VersionConflictEngineException");
         } catch (VersionConflictEngineException e) {
             assertNotNull(e);
-            assertEquals(startVersion + 10, e.getCurrentVersion());
+            assertEquals(startVersion + 10, getCurrentVersion(e));
         }
 
         // Update book #2 with same version number but no version_type = external
@@ -227,7 +242,7 @@ public class VersionTest {
             fail("Expected a VersionConflictEngineException");
         } catch (VersionConflictEngineException e) {
             assertNotNull(e);
-            assertEquals(startVersion + 11, e.getCurrentVersion());
+            assertEquals(startVersion + 11, getCurrentVersion(e));
         }
     }
 }

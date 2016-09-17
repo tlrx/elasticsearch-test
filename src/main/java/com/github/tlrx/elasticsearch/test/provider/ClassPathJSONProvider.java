@@ -19,7 +19,7 @@
 package com.github.tlrx.elasticsearch.test.provider;
 
 import com.github.tlrx.elasticsearch.test.EsSetupRuntimeException;
-import org.elasticsearch.common.Preconditions;
+import com.google.common.base.Preconditions;
 import org.elasticsearch.common.io.Streams;
 
 import java.io.FileNotFoundException;
@@ -56,17 +56,26 @@ public class ClassPathJSONProvider implements JSONProvider {
     @Override
     public String toString() {
         try {
-            if (klass != null) {
-                InputStream inputStream = klass.getResourceAsStream(path);
-                if (inputStream == null) {
-                    throw new FileNotFoundException("Resource [" + path + "] not found in classpath with class  [" + klass.getName() + "]");
-                }
-                return Streams.copyToString(new InputStreamReader(inputStream, "UTF-8"));
-            } else {
-                return Streams.copyToStringFromClasspath(classLoader, path);
-            }
+            InputStream inputStream = openStream();
+            return Streams.copyToString(new InputStreamReader(inputStream, "UTF-8"));
         } catch (IOException e) {
             throw new EsSetupRuntimeException(e);
         }
+    }
+
+    private InputStream openStream() throws IOException {
+        InputStream inputStream;
+        if (klass != null) {
+            inputStream = klass.getResourceAsStream(path);
+            if (inputStream == null) {
+                throw new FileNotFoundException("Resource [" + path + "] not found in classpath with class  [" + klass.getName() + "]");
+            }
+        } else {
+            inputStream = classLoader.getResourceAsStream(path);
+            if (inputStream == null) {
+                throw new FileNotFoundException("Resource [" + path + "] not found in classpath with classloader  [" + classLoader + "]");
+            }
+        }
+        return inputStream;
     }
 }

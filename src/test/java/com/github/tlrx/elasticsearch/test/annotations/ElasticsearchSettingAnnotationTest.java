@@ -52,12 +52,12 @@ public class ElasticsearchSettingAnnotationTest {
         ClusterStateResponse response = adminClient.cluster().prepareState()
                 .execute().actionGet();
 
-        Settings indexSettings = response.getState().metaData().index("library").settings();
+        Settings indexSettings = response.getState().metaData().index("library").getSettings();
         assertEquals("2", indexSettings.get("index.number_of_shards"));
         assertEquals("1", indexSettings.get("index.number_of_replicas"));
 
         // Check default settings
-        indexSettings = response.getState().metaData().index("people").settings();
+        indexSettings = response.getState().metaData().index("people").getSettings();
         assertEquals("1", indexSettings.get("index.number_of_shards"));
         assertEquals("0", indexSettings.get("index.number_of_replicas"));
     }

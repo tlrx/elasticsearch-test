@@ -25,7 +25,6 @@ import org.elasticsearch.action.admin.indices.template.put.PutIndexTemplateActio
 import org.elasticsearch.action.admin.indices.template.put.PutIndexTemplateRequest;
 import org.elasticsearch.action.admin.indices.template.put.PutIndexTemplateResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 
 import java.util.Map;
@@ -54,7 +53,7 @@ public class CreateTemplate implements Request<Void> {
     }
 
     public CreateTemplate withSettings(String source) {
-        Settings settings = ImmutableSettings.settingsBuilder()
+        Settings settings = Settings.builder()
                 .loadFromSource(source)
                 .build();
         withSettings(settings);

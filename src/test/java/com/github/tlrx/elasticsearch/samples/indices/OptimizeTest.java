@@ -4,8 +4,7 @@ import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchAdminClient;
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchClient;
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
-import org.elasticsearch.action.admin.indices.status.DocsStatus;
-import org.elasticsearch.action.admin.indices.status.IndicesStatusResponse;
+import org.elasticsearch.action.admin.indices.stats.IndicesStatsResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.count.CountResponse;
@@ -14,6 +13,7 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
+import org.elasticsearch.index.shard.DocsStats;
 import org.elasticsearch.node.Node;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +52,7 @@ public class OptimizeTest {
     public void setUp() throws IOException {
 
         // Creates NB documents
-        BulkRequestBuilder bulkRequestBuilder = new BulkRequestBuilder(client);
+        BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
 
         for (int i = 0; i < NB; i++) {
             IndexRequest indexRequest = new IndexRequest(INDEX)
@@ -95,31 +95,28 @@ public class OptimizeTest {
         assertEquals((NB - deleted), countResponse.getCount());
 
         // Retrieves document status for the index
-        IndicesStatusResponse status = admin.indices().prepareStatus(INDEX).execute().actionGet();
-        DocsStatus docsStatus = status.getIndex(INDEX).getDocs();
+        IndicesStatsResponse status = admin.indices().prepareStats(INDEX).execute().actionGet();
+        DocsStats docsStats = status.getIndex(INDEX).getTotal().getDocs();
 
         // Check docs status
-        LOGGER.info(String.format("DocsStatus before optimize: %d numDocs, %d maxDocs, %d deletedDocs\r\n", docsStatus.getNumDocs(), docsStatus.getMaxDoc(), docsStatus.getDeletedDocs()));
-        assertEquals((NB - deleted), docsStatus.getNumDocs());
-        assertEquals(NB, docsStatus.getMaxDoc());
-        assertEquals(deleted, docsStatus.getDeletedDocs());
+        LOGGER.info(String.format("DocsStats before optimize: %d numDocs, %d deletedDocs\r\n", docsStats.getCount(), docsStats.getDeleted()));
+        assertEquals((NB - deleted), docsStats.getCount());
+        assertEquals(deleted, docsStats.getDeleted());
 
         // Now optimize the index
-        admin.indices().prepareOptimize(INDEX)
+        admin.indices().prepareForceMerge(INDEX)
                 .setFlush(true)
                 .setOnlyExpungeDeletes(true)
-                .setWaitForMerge(true)
                 .execute()
                 .actionGet();
 
         // Retrieves document status gain
-        docsStatus = admin.indices().prepareStatus(INDEX).execute().actionGet().getIndex(INDEX).getDocs();
+        docsStats = admin.indices().prepareStats(INDEX).execute().actionGet().getIndex(INDEX).getTotal().getDocs();
 
         // Check again docs status
-        LOGGER.info(String.format("DocsStatus after optimize: %d numDocs, %d maxDocs, %d deletedDocs\r\n", docsStatus.getNumDocs(), docsStatus.getMaxDoc(), docsStatus.getDeletedDocs()));
-        assertEquals((NB - deleted), docsStatus.getNumDocs());
-        assertEquals((NB - deleted), docsStatus.getMaxDoc());
+        LOGGER.info(String.format("DocsStats after optimize: %d numDocs, %d deletedDocs\r\n", docsStats.getCount(), docsStats.getDeleted()));
+        assertEquals((NB - deleted), docsStats.getCount());
         // Must be zero
-        assertEquals(0, docsStatus.getDeletedDocs());
+        assertEquals(0, docsStats.getDeleted());
     }
 }

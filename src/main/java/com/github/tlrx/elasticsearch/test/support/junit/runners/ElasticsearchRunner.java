@@ -4,13 +4,13 @@ import com.github.tlrx.elasticsearch.test.support.junit.handlers.annotations.*;
 import com.github.tlrx.elasticsearch.test.support.junit.rules.ElasticsearchClassRule;
 import com.github.tlrx.elasticsearch.test.support.junit.rules.ElasticsearchFieldRule;
 import com.github.tlrx.elasticsearch.test.support.junit.rules.ElasticsearchTestRule;
-import org.elasticsearch.common.netty.util.internal.ConcurrentHashMap;
 import org.junit.rules.TestRule;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * JUnit Runner used to run test classes that have Elasticsearch annotations.
